@@ -75,6 +75,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function RegisterForm() {
+  // retrieve data from the server
   const formFeedback = useActionData<typeof action>();
   return (
     <>

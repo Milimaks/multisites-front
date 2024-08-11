@@ -4,7 +4,7 @@ import { getUserToken, logout } from "~/session.server";
 const getAuthenticadUserSchema = z.object({
   email: z.string().email(),
   id: z.string(),
-  firstname: z.string(),
+  firstName: z.string(),
 });
 
 export const getOptionalUser = async ({ request }: { request: Request }) => {
