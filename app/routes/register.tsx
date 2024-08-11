@@ -10,7 +10,7 @@ const registerSchema = z.object({
       required_error: "Veuillez renseigner votre email",
       invalid_type_error: "Veuillez renseigner un email valide",
     })
-    .email(),
+    .email({ message: "Veuillez renseigner un email valide" }),
   password: z
     .string({
       required_error: "Veuillez renseigner un mot de passe",
@@ -18,10 +18,14 @@ const registerSchema = z.object({
     .min(6, {
       message: "Votre mot de passe doit contenir au moins 6 caractères",
     }),
-  firstname: z.string({ required_error: "Veuillez renseigner votre prénom" }),
+  firstName: z
+    .string({ required_error: "Veuillez renseigner votre prénom" })
+    .min(2, {
+      message: "Votre prénom doit contenir au moins 2 caractères",
+    }),
 });
 
-const tokenSchema = z.object({
+export const tokenSchema = z.object({
   access_token: z.string().optional(),
   message: z.string().optional(),
   error: z.boolean().optional(),
@@ -86,7 +90,7 @@ export default function RegisterForm() {
         </label>
         <label>
           <span>firstname</span>
-          <input type="text" name="firstname" />
+          <input type="text" name="firstName" />
         </label>
         <label>
           <span>password:</span>

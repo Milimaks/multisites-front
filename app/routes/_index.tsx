@@ -1,14 +1,9 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "@remix-run/node";
-import { Form, json, useLoaderData } from "@remix-run/react";
-import { j } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
+import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import { Form } from "@remix-run/react";
 import { z } from "zod";
-import { getOptionalUser } from "~/auth.server";
 import { useOptionalUser } from "~/root";
-import { authenticatedUser, getUserToken } from "~/session.server";
+import { authenticatedUser } from "~/session.server";
+import { tokenSchema } from "./register";
 
 export const meta: MetaFunction = () => {
   return [
@@ -22,15 +17,11 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
-const tokenSchema = z.object({
-  access_token: z.string(),
-});
-
 export const action = async ({ request }: ActionFunctionArgs) => {
   // 1. On récupère les données du formulaire
   const formData = await request.formData();
   const jsonData = Object.fromEntries(formData);
-  const parsedJson = loginSchema.parse(jsonData);
+  const parsedJson = loginSchema.safeParse(jsonData);
 
   // 2. On appelle notre API Nest avec les données du formulaire
   const response = await fetch("http://localhost:3000/auth/login", {
@@ -42,7 +33,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   });
   // 3. On récupère le token de l'utilisateur
   const { access_token } = tokenSchema.parse(await response.json());
-  return await authenticatedUser({ request, userId: access_token });
+  return await authenticatedUser({ request, userId: access_token ?? "" });
 };
 
 export default function Index() {
