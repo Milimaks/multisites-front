@@ -41,11 +41,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: ActionFunctionArgs) => {
   // 1. On récupère les données du formulaire
   const formData = await request.formData();
+  console.log("FormData:", formData);
   const jsonData = Object.fromEntries(formData);
+  console.log("JSON Data:", jsonData);
   const parsedData = registerSchema.safeParse(jsonData);
 
   if (!parsedData.success) {
     const { error } = parsedData;
+    console.log(error.errors);
     return json({
       error: true,
       message: error.errors.map((err) => err.message).join(", "),
@@ -53,29 +56,48 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   // 2. On appelle notre API Nest avec les données du formulaire
-  const response = await fetch("http://localhost:3000/auth/register", {
+  const response = await fetch("http://localhost:8000/auth/register", {
     method: "POST",
     body: JSON.stringify(parsedData),
     headers: {
       "Content-Type": "application/json",
     },
   });
+  // 3. On récupère la réponse de l'API
+  const jsonResponse = await response.json();
 
-  // 3. On récupère le token de l'utilisateur
-  const { access_token, message, error } = tokenSchema.parse(
-    await response.json()
-  );
+  // Vérification des erreurs dans la réponse
+  if (!response.ok) {
+    return json({
+      error: true,
+      message:
+        jsonResponse.message || "Une erreur est survenue lors de l'inscription",
+    });
+  }
 
-  if (error) {
-    return json({ error, message });
+  const { access_token, error } = jsonResponse;
+
+  if (error || !access_token) {
+    return json({ error: true, message: "Inscription échouée" });
   }
-  if (access_token) {
-    return await authenticatedUser({ request, userId: access_token });
-  }
-  return json({
-    error: true,
-    message: "Une erreur est survenue lors de l'inscription",
-  });
+
+  // Authentification de l'utilisateur si tout s'est bien passé
+  return await authenticatedUser({ request, userId: access_token });
+  // // 3. On récupère le token de l'utilisateur
+  // const { access_token, message, error } = tokenSchema.parse(
+  //   await response.json()
+  // );
+
+  // if (error) {
+  //   return json({ error, message });
+  // }
+  // if (access_token) {
+  //   return await authenticatedUser({ request, userId: access_token });
+  // }
+  // return json({
+  //   error: true,
+  //   message: "Une erreur est survenue lors de l'inscription",
+  // });
 };
 
 export default function RegisterForm() {

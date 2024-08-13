@@ -33,7 +33,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     },
   });
   // 3. On récupère le token de l'utilisateur
+
   const { access_token } = tokenSchema.parse(await response.json());
+  console.log(access_token);
   return await authenticatedUser({ request, userId: access_token ?? "" });
 };
 
