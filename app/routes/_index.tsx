@@ -4,6 +4,7 @@ import { z } from "zod";
 import { useOptionalUser } from "~/root";
 import { authenticatedUser } from "~/session.server";
 import { tokenSchema } from "./register";
+import { LoginForm } from "@/components/ui/LoginForm";
 
 export const meta: MetaFunction = () => {
   return [
@@ -44,13 +45,13 @@ export default function Index() {
       {isConnected ? (
         <h1 className="text-3xl">Welcome to {user.firstName}</h1>
       ) : (
-        <LoginForm />
+        <LoginFormRemix />
       )}
     </div>
   );
 }
 
-export const LoginForm = () => {
+export const LoginFormRemix = () => {
   return (
     <Form method="POST">
       <label>

@@ -86,7 +86,7 @@ export default function RegisterForm() {
       <Form method="POST">
         <label>
           <span>email:</span>
-          <input type="email" name="email" />
+          <input type="email" name="email" className="" />
         </label>
         <label>
           <span>firstname</span>

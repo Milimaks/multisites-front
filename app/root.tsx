@@ -10,7 +10,7 @@ import {
   useMatches,
   useRouteLoaderData,
 } from "@remix-run/react";
-import "./tailwind.css";
+import "./globals.css";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { getOptionalUser } from "./auth.server";
 
