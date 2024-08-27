@@ -4,16 +4,16 @@ import { z } from "zod";
 import { useOptionalUser } from "~/root";
 import { authenticatedUser } from "~/session.server";
 import { tokenSchema } from "./register";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+} from "~/@/components/ui/card";
+import { Label } from "~/@/components/ui/label";
+import { Input } from "~/@/components/ui/input";
 
 export const meta: MetaFunction = () => {
   return [
@@ -104,7 +104,10 @@ export function LoginForm() {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <Link to="#" className="ml-auto inline-block text-sm underline">
+              <Link
+                to="/forgot-password"
+                className="ml-auto inline-block text-sm underline"
+              >
                 Forgot your password?
               </Link>
             </div>
