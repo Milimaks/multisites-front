@@ -13,9 +13,11 @@ import {
 import "./globals.css";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { getOptionalUser } from "./auth.server";
+import Navbar from "./@/components/Navbar";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getOptionalUser({ request });
+  console.log(user);
   return json({ user });
 };
 
@@ -38,15 +40,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <nav>
-          {user ? (
-            <Form method="POST" action="logout">
-              <button type="submit">Se déconnecter</button>
-            </Form>
-          ) : (
-            <Link to="/register">Créer un compte</Link>
-          )}
-        </nav>
+        <Navbar user={user} />
+
         {children}
         <ScrollRestoration />
         <Scripts />
