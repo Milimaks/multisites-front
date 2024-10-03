@@ -8,9 +8,13 @@ import {
   CardDescription,
   CardContent,
 } from "./ui/card";
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
+import { ActionFeedback, AlertFeedback } from "./FeedbackComponent";
+import { Icons } from "./icons";
 
 export function LoginForm() {
+  const isLoading = useNavigation().state !== "idle";
+  const formFeedback = useActionData<ActionFeedback>();
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -34,6 +38,7 @@ export function LoginForm() {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
+
               <Link
                 to="/forgot-password"
                 className="ml-auto inline-block text-sm underline"
@@ -42,8 +47,12 @@ export function LoginForm() {
               </Link>
             </div>
             <Input id="password" name="password" type="password" required />
+            <AlertFeedback feedback={formFeedback} />
           </div>
           <Button type="submit" className="w-full">
+            {isLoading ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : null}
             Login
           </Button>
           <Button variant="outline" className="w-full">

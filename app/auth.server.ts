@@ -13,7 +13,7 @@ export const getOptionalUser = async ({ request }: { request: Request }) => {
     return null;
   }
   try {
-    const response = await fetch("http://localhost:3000/auth", {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,

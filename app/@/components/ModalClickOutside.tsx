@@ -19,11 +19,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   // Gestionnaire des clics à l'intérieur de la modal
   const handleModalClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    event.stopPropagation(); // Empêche la propagation du clic à l'extérieur
+    event.stopPropagation();
   };
 
   useEffect(() => {
-    // Ajouter un écouteur d'événements pour les clics
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -38,14 +37,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm"
+      // Force le type de handleClickOutside pour éviter une erreur de type
       onClick={
         handleClickOutside as unknown as React.MouseEventHandler<HTMLDivElement>
-      } // Cast du type pour le gestionnaire d'événement
+      }
     >
       <div
         ref={modalRef}
-        className="bg-white p-6 rounded-lg shadow-lg"
+        className="bg-white rounded-lg shadow-lg "
         onClick={handleModalClick} // Empêche la fermeture lors du clic à l'intérieur
       >
         {children}
