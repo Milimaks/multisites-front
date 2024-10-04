@@ -85,8 +85,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {!shouldHideNavbar && <Navbar user={user} />}
-
         {children}
         <ScrollRestoration />
         <Scripts />

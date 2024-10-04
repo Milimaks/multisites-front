@@ -29,6 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const handleClick = (e: any) => {
+    console.log("clicked");
     setIsModalOpen(!isModalOpen);
   };
 
