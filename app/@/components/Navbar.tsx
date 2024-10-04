@@ -72,7 +72,7 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
 
   return (
     <>
-      <NavigationMenu className="justify-between min-h-[72px]">
+      <NavigationMenu className="justify-between min-h-[72px] fixed top-0 left-0 right-0 z-50 bg-white">
         <NavigationMenuList>
           <Link to="/">
             <img

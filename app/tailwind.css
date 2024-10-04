@@ -29,8 +29,19 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Personnal Css */
+    --canva-premium: #f1ebff;
+    --canva-not-premium: rgba(64, 87, 109, 0.07);
+    --canva-secondary: #ff9933;
+  }
+  .bg-canva-premium {
+    background-color: var(--canva-premium);
   }
 
+  .bg-canva-not-premium {
+    background-color: var(--canva-not-premium);
+  }
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
