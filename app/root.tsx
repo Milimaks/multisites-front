@@ -15,6 +15,8 @@ import Navbar from "./@/components/Navbar";
 import { z } from "zod";
 import { tokenSchema } from "./routes/register";
 import { authenticatedUser } from "./session.server";
+import AsideMenuDashboard from "./@/components/ui/aside-menu-dashboard";
+import { TooltipProvider } from "./@/components/ui/tooltip";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getOptionalUser({ request });
@@ -84,11 +86,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
+      <TooltipProvider>
+        <body>
+          {user ? (
+            <AsideMenuDashboard>{children}</AsideMenuDashboard>
+          ) : (
+            children
+          )}
+          <ScrollRestoration />
+          <Scripts />
+        </body>
+      </TooltipProvider>
     </html>
   );
 }

@@ -4,8 +4,8 @@ import { z } from "zod";
 import { useOptionalUser } from "~/root";
 import { authenticatedUser } from "~/session.server";
 import { tokenSchema } from "./register";
-import ConnectedUserIndex from "~/@/components/Index/ConnectedUserIndex";
-import DisconnectedUserIndex from "~/@/components/Index/DisconnectedUserIndex";
+import ConnectedUserIndex from "~/@/components/index/ConnectedUserIndex";
+import DisconnectedUserIndex from "~/@/components/index/DisconnectedUserIndex";
 
 export const meta: MetaFunction = () => {
   return [
