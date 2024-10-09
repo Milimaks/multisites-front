@@ -12,12 +12,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 }
 
-export default function Analytics() {
+export default function Templates() {
   const { firstName, email } = useLoaderData<typeof loader>();
 
   return (
     <div>
-      <h1>Projects of {email}</h1>
+      <h1>products of {email}</h1>
     </div>
   );
   // ...

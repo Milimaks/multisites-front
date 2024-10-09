@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
         <NavigationMenuList>
           <Link to="/">
             <img
-              src="/image/Canva_Logo.svg.png"
+              src="/image/logo-canva.svg.png"
               alt="Canva Logo"
               className="w-16 h-auto"
             />

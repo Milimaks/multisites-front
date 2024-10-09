@@ -103,7 +103,7 @@ const DisconnectedUserIndex: React.FC = () => {
         className="flex justify-center flex-col items-center gap-8"
       >
         <h1 className="text-5xl font-bold text-center">
-          Qu'allez vous <span className="text-title-canva">créer</span>{" "}
+          Qu'allez vous <span className="text-title-can">créer</span>{" "}
           aujourd'hui ?
         </h1>
 

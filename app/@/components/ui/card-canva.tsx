@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./card";
-import PremiumLogo from "./logo-premium";
+import PremiumLogoCard from "./logo-card-premium";
 
 const notifications = [
   {
@@ -49,16 +49,16 @@ export default function CardCanva({
       className={cn(
         "w-[380px]",
         className,
-        isPremium ? "bg-canva-premium" : "bg-canva-not-premium ",
+        isPremium ? "bg-can-premium" : "bg-can-not-premium ",
         "flex-1  md:w-1/3 lg:w-1/4"
       )}
       {...props}
     >
       <CardHeader className=" justify-between items-center">
-        <p className="bg-white rounded-full pl-2 pr-2 card-text-canva">
+        <p className="bg-white rounded-full pl-2 pr-2 card-text-can">
           {target ? target : "Pour tous"}
         </p>
-        <PremiumLogo color="#fdbc68" isPremium={isPremium} />
+        <PremiumLogoCard color="#fdbc68" isPremium={isPremium} />
       </CardHeader>
       <CardContent className="grid gap-4">
         <CardTitle>{title}</CardTitle>

@@ -31,27 +31,62 @@
     --chart-5: 27 87% 67%;
 
     /* Personnal Css */
-    --canva-premium: #f1ebff;
-    --canva-not-premium: rgba(64, 87, 109, 0.07);
-    --canva-secondary: #ff9933;
+    --can-premium: #f1ebff;
+    --can-not-premium: rgba(64, 87, 109, 0.07);
+    --can-secondary: #ff9933;
+    --can-primary: #7731d8;
+    --can-primary-foreground: rgba(119, 49, 216, 0.1);
+    --can-focus-text: #612dae;
+    --can-subtitle-text: rgba(74, 46, 127, 0.8);
+    --can-bg: linear-gradient(180deg, #f5f0fe, #eef5fc);
+    --can-button: #8b3dff;
+    --can-button-hover: #7731d8;
   }
 
-  .bg-canva-premium {
-    background-color: var(--canva-premium);
+  .bg-button-can {
+    background: var(--can-button);
+  }
+  .bg-button-can-hover {
+    background: var(--can-button-hover);
+  }
+  .bg-can-main {
+    background: var(--can-bg);
+  }
+  .bg-can-foreground {
+    background-color: var(--can-primary-foreground);
+  }
+  .bg-can-background {
+    background-color: var(--can-primary);
   }
 
-  .bg-canva-not-premium {
-    background-color: var(--canva-not-premium);
+  .bg-can-premium {
+    background-color: var(--can-premium);
   }
 
-  .text-title-canva {
+  .bg-can-not-premium {
+    background-color: var(--can-not-premium);
+  }
+  .text-can-primary {
+    color: var(--can-primary);
+  }
+  .text-can-icon {
+    color: var(--can-subtitle-text);
+  }
+  .text-title-can {
     -webkit-background-clip: text;
     background-clip: text;
     background-image: linear-gradient(90deg, #00c4cc, #7d2ae8);
     color: transparent;
     font-style: normal;
   }
-  .card-text-canva {
+  .text-focus-can {
+    color: var(--can-focus-text);
+  }
+
+  .text-subtitle-can {
+    color: var(--can-subtitle-text);
+  }
+  .card-text-can {
     font-size: 0.625rem;
     font-weight: bold;
   }

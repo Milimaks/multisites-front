@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"; // or cloudflare/deno
 import { json } from "@remix-run/node"; // or cloudflare/deno
 import { useLoaderData } from "@remix-run/react";
-import { LoginForm } from "~/@/components/ui/LoginForm";
 import { getOptionalUser } from "~/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -12,7 +11,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 }
 
-export default function Customers() {
+export default function YourApps() {
   const { firstName, email } = useLoaderData<typeof loader>();
 
   return (
