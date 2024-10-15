@@ -18,6 +18,11 @@ export default function Projects() {
   return (
     <div>
       <h1>Projects of {email}</h1>
+      <LoginForm />
+      <LoginForm />
+      <LoginForm />
+      <LoginForm />
+      <LoginForm />
     </div>
   );
   // ...

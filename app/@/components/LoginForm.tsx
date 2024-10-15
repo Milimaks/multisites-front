@@ -49,7 +49,12 @@ export function LoginForm() {
             <Input id="password" name="password" type="password" required />
             <AlertFeedback feedback={formFeedback} />
           </div>
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            name="formType"
+            value="login"
+            className="w-full"
+          >
             {isLoading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : null}

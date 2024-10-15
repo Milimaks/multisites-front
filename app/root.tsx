@@ -89,10 +89,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <TooltipProvider>
         <body>
           {user ? (
-            <AsideMenuDashboard>{children}</AsideMenuDashboard>
+            <AsideMenuDashboard user={user}>{children}</AsideMenuDashboard>
           ) : (
             children
           )}
+
           <ScrollRestoration />
           <Scripts />
         </body>

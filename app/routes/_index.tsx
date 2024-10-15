@@ -2,10 +2,12 @@ import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/react";
 import { z } from "zod";
 import { useOptionalUser } from "~/root";
-import { authenticatedUser } from "~/session.server";
+import { authenticatedUser, getUserToken } from "~/session.server";
 import { tokenSchema } from "./register";
 import ConnectedUserIndex from "~/@/components/index/ConnectedUserIndex";
 import DisconnectedUserIndex from "~/@/components/index/DisconnectedUserIndex";
+import AsideMenuDashboard from "~/@/components/ui/aside-menu-dashboard";
+import { getOptionalUser } from "~/auth.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -23,10 +25,40 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     // 1. On récupère les informations du formulaire.
     const formData = await request.formData();
+    const formType = formData.get("formType");
+    if (formType === "getPremiumTrial") {
+      const user = await getOptionalUser({ request });
+      const userToken = await getUserToken({ request });
+
+      if (!user) {
+        throw new Error(
+          "Vous devez être connecté pour accéder à cette fonctionnalité"
+        );
+      }
+
+      const response = await fetch(
+        `${process.env.BACKEND_URL}/premium/new-trial`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+          body: JSON.stringify({ userId: user.id }),
+        }
+      );
+      if (!response.ok) {
+        console.log(response);
+        throw new Error("Erreur lors de la création de l'essai premium");
+      }
+
+      return json({ success: true, message: "Essai premium attribué !", user });
+    }
+
     const jsonData = Object.fromEntries(formData);
     const parsedJson = loginSchema.parse(jsonData);
     // 2. On appelle notre API Nest avec les données du formulaire
-    const response = await fetch(`http://localhost:3000/auth/login`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
       method: "POST",
       body: JSON.stringify(parsedJson),
       headers: {

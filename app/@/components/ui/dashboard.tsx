@@ -13,7 +13,6 @@ import {
   Package2,
   PanelLeft,
   Search,
-  Settings,
   ShoppingCart,
   Truck,
   Users2,
@@ -60,13 +59,7 @@ import {
   TableRow,
 } from "./table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./tooltip";
-import AsideMenuDashboard from "./aside-menu-dashboard";
+import { TooltipProvider } from "./tooltip";
 
 export const description =
   "An orders dashboard with a sidebar navigation. The sidebar has icon navigation. The content area has a breadcrumb and search in the header. The main area has a list of recent orders with a filter and export button. The main area also has a detailed view of a single order with order details, shipping information, billing information, customer information, and payment information.";

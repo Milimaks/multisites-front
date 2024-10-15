@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@remix-run/react";
+import { Form, Link, useLocation } from "@remix-run/react";
 import {
   FolderDot,
   FolderOpenDot,
@@ -12,8 +12,14 @@ import {
 import { Button } from "./button";
 import PremiumLogo from "./logo-premium";
 
-const AsideMenuDashboard = ({ children }: any) => {
+type AsideMenuDashboardProps = {
+  children: any;
+  user: any;
+};
+
+const AsideMenuDashboard = ({ children, user }: any) => {
   const actualUrl = useLocation();
+  const { isFreePremium } = user;
 
   const isActive = (path: string): boolean => actualUrl.pathname === path;
   return (
@@ -180,17 +186,29 @@ const AsideMenuDashboard = ({ children }: any) => {
             </span>
             <span className="ml-2">Créer un design</span>
           </Button>
-          <Button className="mt-4 h-fit" variant={"outline"}>
-            <PremiumLogo color="#fdbc68" />
-            <span className="text-xs whitespace-normal break-words max-w-full">
-              Obtenir un nouvel essai gratuit
-            </span>
-          </Button>
+          {!isFreePremium && (
+            <Form method="post">
+              <Button
+                className="mt-4 h-fit"
+                variant={"outline"}
+                type="submit"
+                name="formType"
+                value="getPremiumTrial"
+              >
+                <PremiumLogo color="#fdbc68" />
+                <span className="text-xs whitespace-normal break-words max-w-full">
+                  Obtenir un nouvel essai gratuit
+                </span>
+              </Button>
+            </Form>
+          )}
         </div>
       </aside>
-      <main id="pageContent" className="p-2 flex-1">
-        {children}
-      </main>
+      <div className=" h-screen flex-1 bg-can-main overflow-y-auto">
+        <main id="pageContent" className="p-2 bg-red-700 rounded-md m-2  ">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,7 @@
+import { useLocation } from "@remix-run/react";
 import { Button } from "~/@/components/ui/button";
+import { Card, CardTitle } from "~/@/components/ui/card";
+import CardCanva from "~/@/components/ui/card-canva";
 import {
   Carousel,
   CarouselContent,
@@ -6,12 +9,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "~/@/components/ui/carousel";
-import { Card, CardContent, CardTitle } from "~/@/components/ui/card";
-import CardDemo from "~/@/components/ui/card-demo";
-import CardCanva from "~/@/components/ui/card-canva";
-import Navbar from "../Navbar";
-import { useLocation } from "@remix-run/react";
 import { useOptionalUser } from "~/root";
+import Navbar from "../Navbar";
 
 const carouselItems = Array.from({ length: 5 }).map((_, index) => ({
   id: index,
