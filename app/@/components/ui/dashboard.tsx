@@ -618,7 +618,7 @@ export function Dashboard() {
                   </div>
                   <Pagination className="ml-auto mr-0 w-auto">
                     <PaginationContent>
-                      <PaginationItem>
+                      {/* <PaginationItem>
                         <Button
                           size="icon"
                           variant="outline"
@@ -637,7 +637,7 @@ export function Dashboard() {
                           <ChevronRight className="h-3.5 w-3.5" />
                           <span className="sr-only">Next Order</span>
                         </Button>
-                      </PaginationItem>
+                      </PaginationItem> */}
                     </PaginationContent>
                   </Pagination>
                 </CardFooter>

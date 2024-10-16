@@ -204,10 +204,15 @@ const AsideMenuDashboard = ({ children, user }: any) => {
           )}
         </div>
       </aside>
-      <div className=" h-screen flex-1 bg-can-main overflow-y-auto">
-        <main id="pageContent" className="p-2 bg-red-700 rounded-md m-2  ">
-          {children}
-        </main>
+      <div className=" h-screen flex-1 bg-can-main p-2 ">
+        <div className="bg-red-700  flex flex-col p-2 overflow-y-auto h-full">
+          <div>
+            <h1>title</h1>
+          </div>
+          <main id="pageContent" className="p-2  ">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );
