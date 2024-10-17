@@ -1,3 +1,4 @@
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   json,
   Links,
@@ -8,15 +9,16 @@ import {
   useLocation,
   useRouteLoaderData,
 } from "@remix-run/react";
-import "./globals.css";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { getOptionalUser } from "./auth.server";
-import Navbar from "./@/components/Navbar";
 import { z } from "zod";
-import { tokenSchema } from "./routes/register";
-import { authenticatedUser, getUserToken } from "./session.server";
 import AsideMenuDashboard from "./@/components/ui/aside-menu-dashboard";
 import { TooltipProvider } from "./@/components/ui/tooltip";
+import { getOptionalUser } from "./auth.server";
+import "./globals.css";
+import { tokenSchema } from "./routes/register";
+import { authenticatedUser, getUserToken } from "./session.server";
+import { UserProvider } from "./context/userContext";
+
+export type UserType = typeof loader | null;
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getOptionalUser({ request });
@@ -98,6 +100,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export const useOptionalUser = () => {
   const data = useRouteLoaderData<typeof loader>("root");
+
   if (data?.user) {
     return data.user;
   }
@@ -117,18 +120,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <TooltipProvider>
-        <body>
-          {user ? (
-            <AsideMenuDashboard user={user}>{children}</AsideMenuDashboard>
-          ) : (
-            children
-          )}
+      <UserProvider>
+        <TooltipProvider>
+          <body>
+            {user ? (
+              <AsideMenuDashboard user={user}>{children}</AsideMenuDashboard>
+            ) : (
+              children
+            )}
 
-          <ScrollRestoration />
-          <Scripts />
-        </body>
-      </TooltipProvider>
+            <ScrollRestoration />
+            <Scripts />
+          </body>
+        </TooltipProvider>
+      </UserProvider>
     </html>
   );
 }

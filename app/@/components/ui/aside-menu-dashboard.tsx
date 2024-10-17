@@ -1,5 +1,7 @@
 import { Form, Link, useLocation } from "@remix-run/react";
 import {
+  Bell,
+  ChevronDown,
   FolderDot,
   FolderOpenDot,
   Home,
@@ -9,7 +11,9 @@ import {
   Settings,
   Users2,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./button";
+import { ButtonIcon } from "./button-icon";
 import PremiumLogo from "./logo-premium";
 
 type AsideMenuDashboardProps = {
@@ -17,9 +21,35 @@ type AsideMenuDashboardProps = {
   user: any;
 };
 
-const AsideMenuDashboard = ({ children, user }: any) => {
+const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
+  const scrollDivRef = React.useRef<HTMLDivElement | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const actualUrl = useLocation();
   const { isFreePremium } = user;
+
+  // Check if the user is scrolling to add shadow to the header
+  useEffect(() => {
+    const onScroll = () => {
+      if (scrollDivRef.current) {
+        const y = scrollDivRef.current.scrollTop;
+        setIsScrolled(y > 0);
+      }
+    };
+
+    const scrollDiv = scrollDivRef.current;
+    if (scrollDiv) {
+      scrollDiv.addEventListener("scroll", onScroll);
+    }
+
+    return () => {
+      if (scrollDiv) {
+        scrollDiv.removeEventListener("scroll", onScroll);
+      }
+    };
+  }, []);
+
+  const userImage = "/image/profile-user.jpeg";
 
   const isActive = (path: string): boolean => actualUrl.pathname === path;
   return (
@@ -146,7 +176,13 @@ const AsideMenuDashboard = ({ children, user }: any) => {
                     : "text-muted-foreground"
                 }`}
               >
-                <LineChart className="h-5 w-5 text-can-primary" />
+                <LineChart
+                  className={`w-5 ${
+                    isActive("/your-apps")
+                      ? "text-can-primary"
+                      : "text-can-icon"
+                  }`}
+                />
               </Link>
               <span
                 className={`text-xs ${
@@ -205,12 +241,49 @@ const AsideMenuDashboard = ({ children, user }: any) => {
         </div>
       </aside>
       <div className=" h-screen flex-1 bg-can-main p-2 ">
-        <div className="bg-red-700  flex flex-col p-2 overflow-y-auto h-full">
-          <div>
-            <h1>title</h1>
-          </div>
-          <main id="pageContent" className="p-2  ">
-            {children}
+        <div
+          ref={scrollDivRef}
+          className="flex flex-col overflow-y-auto h-full"
+        >
+          <main id="pageContent" className=" bg-white rounded-t-md">
+            <header
+              className={`bg-white rounded-t-md  p-2 h-14 sticky top-0 z-50 ${
+                isScrolled ? "shadow-bottom" : ""
+              }`}
+            >
+              <div className="flex justify-end gap-4 ">
+                <input type="text" className=" bg-red-300"></input>
+                <div className="flex items-center">
+                  <ButtonIcon
+                    Icon={Settings}
+                    tooltipContent={"Paramètres"}
+                    tooltip={true}
+                  />
+                  <ButtonIcon
+                    Icon={Bell}
+                    tooltipContent={"Notifications"}
+                    tooltip={true}
+                  />
+                  <Button variant={"ghost"} className="p-2">
+                    <div className="flex items-center">
+                      <span>
+                        <img
+                          src="/public/image/profile-user.jpeg"
+                          className="rounded-full w-8"
+                        ></img>
+                      </span>
+
+                      <div className="mr-2 ml-3 flex flex-col items-start">
+                        <p className="text-xs">Personnel</p>
+                        <span>{`${user.firstName}`}</span>
+                      </div>
+                      <ChevronDown />
+                    </div>
+                  </Button>
+                </div>
+              </div>
+            </header>
+            <section>{children}</section>
           </main>
         </div>
       </div>
