@@ -8,6 +8,7 @@ import {
   LineChart,
   Package,
   Plus,
+  Search,
   Settings,
   Users2,
 } from "lucide-react";
@@ -15,6 +16,8 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./button";
 import { ButtonIcon } from "./button-icon";
 import PremiumLogo from "./logo-premium";
+import "/style/searchBar.css";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 type AsideMenuDashboardProps = {
   children: any;
@@ -251,24 +254,53 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
                 isScrolled ? "shadow-bottom" : ""
               }`}
             >
-              <div className="flex justify-end gap-4 ">
-                <input type="text" className=" bg-red-300"></input>
-                <div className="flex items-center">
-                  <ButtonIcon
-                    Icon={Settings}
-                    tooltipContent={"Paramètres"}
-                    tooltip={true}
-                  />
-                  <ButtonIcon
-                    Icon={Bell}
-                    tooltipContent={"Notifications"}
-                    tooltip={true}
-                  />
+              <div className="custom-grid gap-4 ">
+                <div className="rounded-md hover:border-gray-400 border-solid border search-bar-grid flex items-center h-full ">
+                  <Search className="w-5 h-5 text-muted-foreground m-1" />
+                  <input
+                    type="text"
+                    className=" w-full border-none hover:border-none focus:border-none focus:outline-none placeholder-gray-400 text-sm"
+                    placeholder="Recherchez votre contenu et du contenu canva"
+                  ></input>
+                </div>
+                <div className="personal-info-grid flex items-center ">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Button
+                        className="w-8 h-8 flex justify-center items-center"
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                      >
+                        <div className="flex items-center justify-center">
+                          <Settings className="w-5 h-5" />
+                        </div>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Paramètres</TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Button
+                        className="w-8 h-8 flex justify-center items-center"
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                      >
+                        <div className="flex items-center justify-center">
+                          <Bell className="w-5 h-5" />
+                        </div>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Notifications</TooltipContent>
+                  </Tooltip>
+
                   <Button variant={"ghost"} className="p-2">
                     <div className="flex items-center">
                       <span>
                         <img
-                          src="/public/image/profile-user.jpeg"
+                          src="/image/profile-user.jpeg"
                           className="rounded-full w-8"
                         ></img>
                       </span>
@@ -277,7 +309,7 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
                         <p className="text-xs">Personnel</p>
                         <span>{`${user.firstName}`}</span>
                       </div>
-                      <ChevronDown />
+                      <ChevronDown className="w-4" />
                     </div>
                   </Button>
                 </div>

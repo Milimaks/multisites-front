@@ -111,7 +111,7 @@ const ForgotPasswordForm = () => {
                     Email
                   </Label>
                   <Input
-                    id="email"
+                    id="email-forgot"
                     name="email"
                     placeholder="Adresse email"
                     type="email"

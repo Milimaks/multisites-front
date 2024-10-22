@@ -1,0 +1,19 @@
+.custom-grid {
+  display: grid;
+  grid-template-columns: 1fr [ searchbar] 1.5fr [ end] minmax(min-content, 1fr);
+}
+
+.search-bar-grid {
+  grid-column: searchbar;
+  max-width: 464px;
+  min-width: 160px;
+  width: 100%;
+}
+
+.personal-info-grid {
+  align-items: center;
+  display: flex;
+  flex-wrap: nowrap;
+  grid-column: end;
+  justify-content: flex-end;
+}

@@ -16,12 +16,10 @@ export function LoginForm() {
   const isLoading = useNavigation().state !== "idle";
   const formFeedback = useActionData<ActionFeedback>();
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
+    <Card className="mx-auto max-w-sm min-w-96">
+      <CardHeader className="flex-col">
         <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
+        <CardDescription>Enter yo to login to your account</CardDescription>
       </CardHeader>
       <CardContent>
         <Form method="post" className="grid gap-4">

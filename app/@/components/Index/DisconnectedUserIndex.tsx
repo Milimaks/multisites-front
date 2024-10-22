@@ -117,9 +117,12 @@ const DisconnectedUserIndex: React.FC = () => {
       <Carousel className="pt-8">
         <CarouselContent className="">
           {CarouselItemData.map((item, index) => (
-            <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/6">
+            <CarouselItem
+              key={index}
+              className="md:basis-1/4 lg:basis-1/6 transform transition-transform duration-300 hover:scale-110 cursor-pointer"
+            >
               <div className="">
-                <Card className="overflow-hidden rounded-md">
+                <Card className=" rounded-md">
                   <div className="relative">
                     <img
                       src={item.imageUrl}

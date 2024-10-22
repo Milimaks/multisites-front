@@ -20,19 +20,17 @@ export function ButtonIcon({
   ...props
 }: ButtonIconProps) {
   return tooltip ? (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <Button variant="ghost" size="icon" {...props}>
-            <Icon className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{tooltipContent}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger>
+        <Button variant="ghost" size="icon" {...props} asChild>
+          <Icon className="w-5 h-5" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{tooltipContent}</TooltipContent>
+    </Tooltip>
   ) : (
     <Button variant="ghost" size="icon" {...props}>
-      <Icon className="h-4 w-4" />
+      <Icon className="w-5 h-5" />
     </Button>
   );
 }

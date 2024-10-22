@@ -50,7 +50,7 @@ export default function CardCanva({
         "w-[380px]",
         className,
         isPremium ? "bg-can-premium" : "bg-can-not-premium ",
-        "flex-1  md:w-1/3 lg:w-1/4"
+        "flex-1  md:w-1/3 lg:w-1/4 "
       )}
       {...props}
     >
