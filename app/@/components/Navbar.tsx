@@ -9,6 +9,8 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
+  NavigationMenuViewport,
+  ListItem,
 } from "../components/ui/navigation-menu";
 import { Link } from "@remix-run/react";
 import { cn } from "../lib/utils";
@@ -16,6 +18,7 @@ import React from "react";
 import { Button } from "./ui/button";
 import { ButtonIconHelp } from "./ui/icon-help";
 import { ButtonIconSearch } from "./ui/icon-search";
+import { navbarWelcomeData } from "../../data/navbarDatas";
 
 interface NavbarProps {
   icon?: string;
@@ -85,8 +88,31 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
           <NavigationMenuItem>
             <NavigationMenuTrigger>Accueil</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                {components.map((component) => (
+              {navbarWelcomeData.map((data, index) => (
+                <ul
+                  className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]"
+                  key={index}
+                >
+                  <a
+                    href={data?.link}
+                    className="font-semibold text-base font-heading leading-none"
+                  >
+                    {data.title}
+                  </a>
+                  {data.content?.map((item, index) => (
+                    <div key={index}>
+                      <a
+                        href={item.href}
+                        className="text-muted-foreground font-base line-clamp-2 text-sm leading-snug"
+                      >
+                        {item.description}
+                      </a>
+                    </div>
+                  ))}
+                </ul>
+              ))}
+
+              {/* {components.map((component) => (
                   <ListItem
                     key={component.title}
                     title={component.title}
@@ -94,8 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
                   >
                     {component.description}
                   </ListItem>
-                ))}
-              </ul>{" "}
+                ))} */}
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -198,31 +223,5 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
     </>
   );
 };
-
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "hover:bg-accent block text-text select-none space-y-1 rounded-base border-2 border-transparent p-3 leading-none no-underline outline-none transition-colors hover:border-border dark:hover:border-darkBorder",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-base font-heading leading-none">{title}</div>
-          <p className="text-muted-foreground font-base line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
-ListItem.displayName = "ListItem";
 
 export default Navbar;
