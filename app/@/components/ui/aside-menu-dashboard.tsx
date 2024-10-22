@@ -18,6 +18,11 @@ import { ButtonIcon } from "./button-icon";
 import PremiumLogo from "./logo-premium";
 import "/style/searchBar.css";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/@/components/ui/popover";
 
 type AsideMenuDashboardProps = {
   children: any;
@@ -295,23 +300,40 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
                     </TooltipTrigger>
                     <TooltipContent>Notifications</TooltipContent>
                   </Tooltip>
+                  <Popover>
+                    <PopoverTrigger>
+                      {" "}
+                      <Button variant={"ghost"} className="p-2" asChild>
+                        <div>
+                          <div className="flex items-center">
+                            <span>
+                              <img
+                                src="/image/profile-user.jpeg"
+                                className="rounded-full w-8"
+                              ></img>
+                            </span>
 
-                  <Button variant={"ghost"} className="p-2">
-                    <div className="flex items-center">
-                      <span>
-                        <img
-                          src="/image/profile-user.jpeg"
-                          className="rounded-full w-8"
-                        ></img>
-                      </span>
-
-                      <div className="mr-2 ml-3 flex flex-col items-start">
-                        <p className="text-xs">Personnel</p>
-                        <span>{`${user.firstName}`}</span>
-                      </div>
-                      <ChevronDown className="w-4" />
-                    </div>
-                  </Button>
+                            <div className="mr-2 ml-3 flex flex-col items-start">
+                              <p className="text-xs">Personnel</p>
+                              <span>{`${user.firstName}`}</span>
+                            </div>
+                            <ChevronDown className="w-4" />
+                          </div>
+                        </div>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <Form method="post" action="/logout">
+                        <Button
+                          variant="ghost"
+                          type="submit"
+                          className="w-full"
+                        >
+                          Se déconnecter
+                        </Button>
+                      </Form>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
             </header>
