@@ -1,13 +1,20 @@
 import React, { ReactNode, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
+import { cn } from "../lib/utils";
 
 interface ModalProps {
   isOpen: boolean;
+  className?: string;
   onClose: () => void;
   children: ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  className,
+  children,
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Gestionnaire des clics à l'extérieur de la modal
@@ -45,7 +52,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-lg shadow-lg "
+        className={cn("bg-white rounded-lg shadow-lg ", className)}
         onClick={handleModalClick} // Empêche la fermeture lors du clic à l'intérieur
       >
         {children}

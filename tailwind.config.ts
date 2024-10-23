@@ -55,6 +55,10 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      height: {
+        "85dvh": "85dvh",
+        "90dvh": "90dvh",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

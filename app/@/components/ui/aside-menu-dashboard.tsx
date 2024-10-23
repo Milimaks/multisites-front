@@ -6,6 +6,7 @@ import {
   FolderOpenDot,
   Home,
   LineChart,
+  MessageCircleMore,
   Package,
   Plus,
   Search,
@@ -202,6 +203,29 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
                 Applis
               </span>
             </div>
+            <div className="flex flex-col items-center ">
+              <Link
+                to="/chat"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8 ${
+                  isActive("/chat")
+                    ? "bg-can-foreground "
+                    : "text-muted-foreground"
+                }`}
+              >
+                <MessageCircleMore
+                  className={`w-5 ${
+                    isActive("/chat") ? "text-can-primary" : "text-can-icon"
+                  }`}
+                />
+              </Link>
+              <span
+                className={`text-xs ${
+                  isActive("/chat") ? "text-focus-can" : "text-subtitle-can"
+                }`}
+              >
+                Chat
+              </span>
+            </div>
           </nav>
           <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
             <Link
@@ -337,7 +361,7 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
                 </div>
               </div>
             </header>
-            <section>{children}</section>
+            <section className="p-4 ">{children}</section>
           </main>
         </div>
       </div>
