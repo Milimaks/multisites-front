@@ -27,12 +27,19 @@ export default function ChatRoute() {
   const [filteredUsers, setFilteredUsers] = useState(usersData);
   const [modalName, setModalName] = useState("");
 
+  const [isFetching, setIsFetching] = useState(false);
+
   const fetcher = useFetcher();
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
+    setIsFetching(true);
+    if (query.length <= 1) {
+      setFilteredUsers([]);
+      return;
+    }
 
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
@@ -45,6 +52,7 @@ export default function ChatRoute() {
         );
         setFilteredUsers(results);
       }
+      setIsFetching(false);
     }, 500);
   };
 
@@ -86,7 +94,7 @@ export default function ChatRoute() {
               ))
             ) : (
               <li className="list-none p-2 text-gray-500">
-                Aucun utilisateur trouvé
+                {!isFetching && "Aucun utilisateur trouvé"}
               </li>
             )}
           </div>
