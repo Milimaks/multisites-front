@@ -1,7 +1,7 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
-import { Search } from "lucide-react";
-import { useRef, useState } from "react";
+import { LoaderIcon, Search } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "~/@/components/ModalClickOutside";
 import { Button } from "~/@/components/ui/button";
 import { getOptionalUser } from "~/auth.server";
@@ -13,33 +13,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
     email: user?.email,
   });
 }
-const usersData = [
-  { id: 1, name: "Alice Dupont" },
-  { id: 2, name: "Bob Martin" },
-  { id: 3, name: "Charlie Durand" },
-  { id: 4, name: "David Moreau" },
-  { id: 5, name: "Eve Lefevre" },
-];
 
 export default function ChatRoute() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(usersData);
   const [modalName, setModalName] = useState("");
 
-  const [isFetching, setIsFetching] = useState(false);
-
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<any>();
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    setIsFetching(true);
-    if (query.length <= 1) {
-      setFilteredUsers([]);
-      return;
-    }
 
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
@@ -47,12 +32,8 @@ export default function ChatRoute() {
 
     debounceTimeout.current = setTimeout(() => {
       if (query.trim() !== "" && query.length > 1) {
-        const results = usersData.filter((user) =>
-          user.name.toLowerCase().includes(query.toLowerCase())
-        );
-        setFilteredUsers(results);
+        fetcher.load(`/users-search?query=${query}`);
       }
-      setIsFetching(false);
     }, 500);
   };
 
@@ -60,7 +41,6 @@ export default function ChatRoute() {
     setModalName(name);
     setIsModalOpen(true);
   };
-
   return (
     <div className="w-full h-full flex">
       <aside className="flex flex-col h-85dvh w-80 bg-gray-100">
@@ -68,33 +48,37 @@ export default function ChatRoute() {
           <Search className="w-5 h-5 text-muted-foreground m-1" />
           <input
             type="text"
-            className=" border-none hover:border-none focus:border-none focus:outline-none placeholder-gray-400 text-sm"
+            className="border-none hover:border-none focus:border-none focus:outline-none placeholder-gray-400 text-sm"
             placeholder="Recherchez un ami"
             value={searchQuery}
             onChange={handleSearch}
-          ></input>
+          />
         </div>
         {searchQuery.length > 1 && (
           <div className="w-full h-full pt-4">
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user, index) => (
+            {fetcher.data && fetcher.data.length > 0 ? (
+              fetcher.data.map((user: any, index: number) => (
                 <li
                   key={index}
                   className="flex justify-between list-none p-2 border-b"
                 >
                   <div className="flex gap-1 items-center">
-                    <img src="/image/profile-user.jpeg" className="w-6 h-6" />
-                    <p>{user.name}</p>
+                    <img
+                      src="/image/profile-user.jpeg"
+                      className="w-6 h-6"
+                      alt="Profile"
+                    />
+                    <p>{user.firstName}</p>
                   </div>
                   <button
-                    onClick={() => handleModal(user.name)}
+                    onClick={() => handleModal(user.firstName)}
                     className="rounded-full bg-blue-600 w-10 h-10"
                   ></button>
                 </li>
               ))
             ) : (
               <li className="list-none p-2 text-gray-500">
-                {!isFetching && "Aucun utilisateur trouvé"}
+                {fetcher.data === undefined ? "Aucun utilisateur trouvé" : ""}
               </li>
             )}
           </div>
