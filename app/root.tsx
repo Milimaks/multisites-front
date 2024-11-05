@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useLocation,
   useRouteLoaderData,
 } from "@remix-run/react";
@@ -22,7 +23,8 @@ export type UserType = typeof loader | null;
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getOptionalUser({ request });
-  return json({ user });
+  const userToken = await getUserToken({ request });
+  return json({ user, userToken });
 };
 
 const loginSchema = z.object({
@@ -57,7 +59,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         }
       );
       if (!response.ok) {
-        console.log(response);
         throw new Error("Erreur lors de la création de l'essai premium");
       }
 
@@ -100,7 +101,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export const useOptionalUser = () => {
   const data = useRouteLoaderData<typeof loader>("root");
-
   if (data?.user) {
     return data.user;
   }
@@ -108,6 +108,8 @@ export const useOptionalUser = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useLoaderData<typeof loader>();
+  const userToken = data?.userToken;
   const user = useOptionalUser();
   const location = useLocation();
   const pathsToHideNavbar = ["/register", "/forgot-password"];
@@ -124,7 +126,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <TooltipProvider>
           <body>
             {user ? (
-              <AsideMenuDashboard user={user}>{children}</AsideMenuDashboard>
+              <AsideMenuDashboard user={user} userToken={userToken}>
+                {children}
+              </AsideMenuDashboard>
             ) : (
               children
             )}

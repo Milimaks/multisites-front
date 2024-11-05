@@ -13,7 +13,6 @@ import {
   ListItem,
 } from "../components/ui/navigation-menu";
 import { Link } from "@remix-run/react";
-import { cn } from "../lib/utils";
 import React from "react";
 import { Button } from "./ui/button";
 import { ButtonIconHelp } from "./ui/icon-help";
@@ -32,7 +31,6 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const handleClick = (e: any) => {
-    console.log("clicked");
     setIsModalOpen(!isModalOpen);
   };
 
@@ -88,39 +86,28 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
           <NavigationMenuItem>
             <NavigationMenuTrigger>Accueil</NavigationMenuTrigger>
             <NavigationMenuContent>
-              {navbarWelcomeData.map((data, index) => (
-                <ul
-                  className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]"
-                  key={index}
-                >
-                  <a
-                    href={data?.link}
-                    className="font-semibold text-base font-heading leading-none"
-                  >
-                    {data.title}
-                  </a>
-                  {data.content?.map((item, index) => (
-                    <div key={index}>
-                      <a
-                        href={item.href}
-                        className="text-muted-foreground font-base line-clamp-2 text-sm leading-snug"
-                      >
-                        {item.description}
-                      </a>
-                    </div>
-                  ))}
-                </ul>
-              ))}
-
-              {/* {components.map((component) => (
-                  <ListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                  >
-                    {component.description}
-                  </ListItem>
-                ))} */}
+              <ul className="flex  w-[400px] gap-3 p-4 md:w-[500px]  lg:w-[600px]">
+                {navbarWelcomeData.map((data, index) => (
+                  <div className="gap-3 p-4 flex flex-col min-w-16" key={index}>
+                    <a
+                      href={data?.link}
+                      className="font-semibold text-base font-heading leading-none"
+                    >
+                      {data.title}
+                    </a>
+                    {data.content?.map((item, index) => (
+                      <li key={index + 1}>
+                        <a
+                          href={item.href}
+                          className="text-muted-foreground font-base  text-sm leading-snug"
+                        >
+                          {item.description}
+                        </a>
+                      </li>
+                    ))}
+                  </div>
+                ))}
+              </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -176,14 +163,8 @@ const Navbar: React.FC<NavbarProps> = ({ icon, user }) => {
 
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                {components.map((component) => (
-                  <ListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                  >
-                    {component.description}
-                  </ListItem>
+                {components.map((component, index) => (
+                  <div key={index}>{component.title}</div>
                 ))}
               </ul>{" "}
             </NavigationMenuContent>

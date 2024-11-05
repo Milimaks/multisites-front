@@ -1,25 +1,40 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
-import { LoaderIcon, Search } from "lucide-react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
+import { LoaderIcon, Search, UserRoundPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { set } from "zod";
 import Modal from "~/@/components/ModalClickOutside";
 import { Button } from "~/@/components/ui/button";
 import { getOptionalUser } from "~/auth.server";
 
+interface ModalData {
+  userId: string;
+  firstName: string;
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await getOptionalUser({ request });
+  if (!user) {
+    throw new Error("User not found");
+  }
+
   return json({
-    firstName: user?.firstName,
-    email: user?.email,
+    firstName: user.firstName,
+    email: user.email,
+    id: user.id,
   });
 }
 
 export default function ChatRoute() {
+  const { id: userId } = useLoaderData<typeof loader>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [modalName, setModalName] = useState("");
+  const [modalData, setModalData] = useState<ModalData | null>(null);
 
+  const friendFetcher = useFetcher();
   const fetcher = useFetcher<any>();
+  const addFriendFetcher = useFetcher();
+
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,10 +52,25 @@ export default function ChatRoute() {
     }, 500);
   };
 
-  const handleModal = (name: string) => {
-    setModalName(name);
+  const handleModal = (firstName: string, userId: string) => {
+    setModalData({ firstName, userId });
     setIsModalOpen(true);
   };
+
+  const handleAddFriend = (senderUserId: string, receiverUserId: string) => {
+    addFriendFetcher.submit(
+      { senderUserId, receiverUserId },
+      { method: "post", action: "/friend-request" }
+    );
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (userId) {
+      friendFetcher.load("/friend-request");
+    }
+  }, [userId]);
+
   return (
     <div className="w-full h-full flex">
       <aside className="flex flex-col h-85dvh w-80 bg-gray-100">
@@ -71,14 +101,18 @@ export default function ChatRoute() {
                     <p>{user.firstName}</p>
                   </div>
                   <button
-                    onClick={() => handleModal(user.firstName)}
-                    className="rounded-full bg-blue-600 w-10 h-10"
-                  ></button>
+                    onClick={() => handleModal(user.firstName, user.userId)}
+                    className="rounded-full w-10 h-10"
+                  >
+                    <UserRoundPlus />
+                  </button>
                 </li>
               ))
             ) : (
               <li className="list-none p-2 text-gray-500">
-                {fetcher.data === undefined ? "Aucun utilisateur trouvé" : ""}
+                {fetcher.data && fetcher.data.length === 0
+                  ? "Aucun utilisateur trouvé"
+                  : ""}
               </li>
             )}
           </div>
@@ -90,11 +124,17 @@ export default function ChatRoute() {
         >
           <p>
             Voulez vous rajouter{" "}
-            <span className="font-semibold">{modalName}</span> à votre List
-            d'amis ?
+            <span className="font-semibold">{modalData?.firstName}</span> à
+            votre liste d'amis ?
           </p>
           <div className="flex justify-end pt-4">
-            <Button variant={"ghost"} className="mr-2">
+            <Button
+              variant={"ghost"}
+              className="mr-2"
+              onClick={() =>
+                modalData?.userId && handleAddFriend(userId, modalData.userId)
+              }
+            >
               Oui
             </Button>
             <Button variant={"default"} onClick={() => setIsModalOpen(false)}>

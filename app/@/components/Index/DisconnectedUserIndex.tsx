@@ -114,7 +114,7 @@ const DisconnectedUserIndex: React.FC = () => {
           Commencer à créer
         </Button>
       </section>
-      <Carousel className="pt-8">
+      <Carousel className="pt-8 overflow-hidden">
         <CarouselContent className="">
           {CarouselItemData.map((item, index) => (
             <CarouselItem

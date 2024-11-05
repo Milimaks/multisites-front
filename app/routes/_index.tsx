@@ -1,13 +1,12 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/react";
 import { z } from "zod";
+import ConnectedUserIndex from "~/@/components/index/ConnectedUserIndex";
+import DisconnectedUserIndex from "~/@/components/index/DisconnectedUserIndex";
+import { getOptionalUser } from "~/auth.server";
 import { useOptionalUser } from "~/root";
 import { authenticatedUser, getUserToken } from "~/session.server";
 import { tokenSchema } from "./register";
-import ConnectedUserIndex from "~/@/components/index/ConnectedUserIndex";
-import DisconnectedUserIndex from "~/@/components/index/DisconnectedUserIndex";
-import AsideMenuDashboard from "~/@/components/ui/aside-menu-dashboard";
-import { getOptionalUser } from "~/auth.server";
 
 export const meta: MetaFunction = () => {
   return [

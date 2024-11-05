@@ -1,4 +1,10 @@
-import { Form, Link, useLocation } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useFetcher,
+  useLoaderData,
+  useLocation,
+} from "@remix-run/react";
 import {
   Bell,
   ChevronDown,
@@ -13,30 +19,36 @@ import {
   Settings,
   Users2,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Button } from "./button";
-import { ButtonIcon } from "./button-icon";
-import PremiumLogo from "./logo-premium";
-import "/style/searchBar.css";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/@/components/ui/popover";
+import { Button } from "./button";
+import PremiumLogo from "./logo-premium";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import "/style/searchBar.css";
+import { UserContext } from "~/context/userContext";
+import { ActionFunctionArgs } from "@remix-run/node";
 
 type AsideMenuDashboardProps = {
   children: any;
   user: any;
+  userToken?: string | null;
 };
 
-const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
+const AsideMenuDashboard = ({
+  children,
+  user,
+  userToken = null,
+}: AsideMenuDashboardProps) => {
   const scrollDivRef = React.useRef<HTMLDivElement | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-
   const actualUrl = useLocation();
-  const { isFreePremium } = user;
+  const friendRequestFetcher = useFetcher();
 
+  const { isFreePremium, id } = user;
   // Check if the user is scrolling to add shadow to the header
   useEffect(() => {
     const onScroll = () => {
@@ -58,9 +70,19 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
     };
   }, []);
 
-  const userImage = "/image/profile-user.jpeg";
-
+  useEffect(() => {
+    if (userToken) {
+      friendRequestFetcher.load("/friend-request");
+    }
+  }, [userToken]);
   const isActive = (path: string): boolean => actualUrl.pathname === path;
+
+  const handleFriendRequest = (friendRequestId: string, actionType: string) => {
+    friendRequestFetcher.submit(
+      { friendRequestId, actionType },
+      { method: "post", action: "/friend-request" }
+    );
+  };
   return (
     <div className="flex">
       <aside className="flex inset-y-0 sticky h-dvh  bg-can-main">
@@ -311,16 +333,71 @@ const AsideMenuDashboard = ({ children, user }: AsideMenuDashboardProps) => {
 
                   <Tooltip>
                     <TooltipTrigger>
-                      <Button
-                        className="w-8 h-8 flex justify-center items-center"
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                      >
-                        <div className="flex items-center justify-center">
-                          <Bell className="w-5 h-5" />
-                        </div>
-                      </Button>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            className="w-8 h-8 flex justify-center items-center"
+                            variant="ghost"
+                            size="icon"
+                            asChild
+                          >
+                            <div className="flex items-center justify-center">
+                              <Bell className="w-5 h-5" />
+                            </div>
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <div className="flex flex-col items-center">
+                            <div>
+                              <span className="text-xs">Notifications</span>
+                              {Array.isArray(friendRequestFetcher.data) &&
+                                friendRequestFetcher.data.map((data, index) => {
+                                  return (
+                                    <div key={index}>
+                                      <div
+                                        key={data.id}
+                                        className="flex items-center justify-between min-w-96"
+                                      >
+                                        <p>
+                                          {data.senderUser.firstName}{" "}
+                                          {data.senderUser.lastName}
+                                        </p>
+                                        <div>
+                                          <Button
+                                            variant={"outline"}
+                                            className="mr-4"
+                                            onClick={() =>
+                                              handleFriendRequest(
+                                                data.id,
+                                                "accept"
+                                              )
+                                            }
+                                          >
+                                            Oui
+                                          </Button>
+                                          <Button
+                                            onClick={() =>
+                                              handleFriendRequest(
+                                                data.id,
+                                                "decline"
+                                              )
+                                            }
+                                          >
+                                            Non
+                                          </Button>
+                                        </div>
+                                      </div>
+                                      <span>
+                                        {" "}
+                                        Accepter la demande d'ami(e) reçu ?
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </TooltipTrigger>
                     <TooltipContent>Notifications</TooltipContent>
                   </Tooltip>
