@@ -28,8 +28,9 @@ export default function ChatRoute() {
   const [searchQuery, setSearchQuery] = useState("");
   const [modalData, setModalData] = useState<ModalData | null>(null);
 
+  const [IsFocused, setIsFocused] = useState(false);
   const friendFetcher = useFetcher();
-  const fetcher = useFetcher<any>();
+  const searchUserfetcher = useFetcher<any>();
   const addFriendFetcher = useFetcher();
 
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -44,7 +45,7 @@ export default function ChatRoute() {
 
     debounceTimeout.current = setTimeout(() => {
       if (query.trim() !== "" && query.length > 1) {
-        fetcher.load(`/users-search?query=${query}`);
+        searchUserfetcher.load(`/users-search?query=${query}`);
       }
     }, 500);
   };
@@ -60,6 +61,10 @@ export default function ChatRoute() {
       { method: "post", action: "/friend-request" }
     );
     setIsModalOpen(false);
+  };
+
+  const handleFocus = (e: boolean) => {
+    setIsFocused(e);
   };
 
   useEffect(() => {
@@ -79,9 +84,15 @@ export default function ChatRoute() {
             placeholder="Recherchez un ami"
             value={searchQuery}
             onChange={handleSearch}
+            onFocus={() => handleFocus(true)}
+            onBlur={() => {
+              handleFocus(false);
+              setSearchQuery("");
+            }}
           />
         </div>
-        {friendFetcher &&
+        {!IsFocused &&
+          friendFetcher &&
           Array.isArray(friendFetcher.data) &&
           friendFetcher.data.length > 0 &&
           friendFetcher.data.map((friend: any, index: number) => (
@@ -96,10 +107,10 @@ export default function ChatRoute() {
               </p>
             </div>
           ))}
-        {searchQuery.length > 1 && (
+        {IsFocused && searchQuery.length > 1 && (
           <div className="w-full h-full pt-4">
-            {fetcher.data && fetcher.data.length > 0 ? (
-              fetcher.data.map((user: any, index: number) => (
+            {searchUserfetcher.data && searchUserfetcher.data.length > 0 ? (
+              searchUserfetcher.data.map((user: any, index: number) => (
                 <li
                   key={index}
                   className="flex justify-between list-none p-2 border-b"
@@ -110,19 +121,26 @@ export default function ChatRoute() {
                       className="w-6 h-6"
                       alt="Profile"
                     />
-                    <p>{user.firstName}</p>
+                    <p>
+                      {user.firstName} {user.id}
+                    </p>
                   </div>
-                  <button
-                    onClick={() => handleModal(user.firstName, user.userId)}
-                    className="rounded-full w-10 h-10"
-                  >
-                    <UserRoundPlus />
-                  </button>
+                  {Array.isArray(friendFetcher.data) &&
+                    !friendFetcher.data.some(
+                      (friend: any) => friend.id === user.userId
+                    ) && (
+                      <button
+                        onClick={() => handleModal(user.firstName, user.userId)}
+                        className="rounded-full w-10 h-10"
+                      >
+                        <UserRoundPlus />
+                      </button>
+                    )}
                 </li>
               ))
             ) : (
               <li className="list-none p-2 text-gray-500">
-                {fetcher.data && fetcher.data.length === 0
+                {searchUserfetcher.data && searchUserfetcher.data.length === 0
                   ? "Aucun utilisateur trouvé"
                   : ""}
               </li>
