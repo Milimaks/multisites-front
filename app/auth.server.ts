@@ -1,5 +1,6 @@
+import { redirect } from "@remix-run/node";
 import { z } from "zod";
-import { getUserToken, logout } from "~/session.server";
+import { getSession, getUserToken, logout } from "~/session.server";
 
 const getAuthenticadUserSchema = z.object({
   email: z.string().email(),
@@ -28,3 +29,17 @@ export const getOptionalUser = async ({ request }: { request: Request }) => {
     throw await logout({ request });
   }
 };
+
+export async function requireAuthCookie(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("userId")) {
+    throw redirect("/");
+  }
+
+  const user = await getOptionalUser({ request });
+
+  if (!user) {
+    throw redirect("/");
+  }
+  return user;
+}

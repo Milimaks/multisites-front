@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { set } from "zod";
 import Modal from "~/@/components/ModalClickOutside";
 import { Button } from "~/@/components/ui/button";
-import { getOptionalUser } from "~/auth.server";
+import { getOptionalUser, requireAuthCookie } from "~/auth.server";
 
 interface ModalData {
   userId: string;
@@ -13,10 +13,7 @@ interface ModalData {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await getOptionalUser({ request });
-  if (!user) {
-    throw new Error("User not found");
-  }
+  let user = await requireAuthCookie(request);
 
   return json({
     firstName: user.firstName,
