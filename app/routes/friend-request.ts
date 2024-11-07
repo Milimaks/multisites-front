@@ -12,7 +12,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Send a new friend request
   if (senderUserId && receiverUserId) {
-    const url = `${process.env.BACKEND_URL}/friend-request`;
+    const url = `${process.env.BACKEND_URL}/friend/request`;
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -43,7 +43,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (!friendRequestId || !actionType) {
     return json({ error: "Missing data" }, { status: 400 });
   }
-  const url = `${process.env.BACKEND_URL}/friend-request/${friendRequestId}/${actionType}`;
+  const url = `${process.env.BACKEND_URL}/friend/request/${friendRequestId}/${actionType}`;
   const method = "POST";
   try {
     const response = await fetch(url, {
@@ -65,7 +65,7 @@ export const action: ActionFunction = async ({ request }) => {
 export const loader: LoaderFunction = async ({ request }) => {
   const userToken = await getUserToken({ request });
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/friend-request`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/friend/requests`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

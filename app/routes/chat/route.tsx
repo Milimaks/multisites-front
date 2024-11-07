@@ -67,7 +67,7 @@ export default function ChatRoute() {
 
   useEffect(() => {
     if (userId) {
-      friendFetcher.load("/friend-request");
+      friendFetcher.load("/friend-list");
     }
   }, [userId]);
 
@@ -84,6 +84,21 @@ export default function ChatRoute() {
             onChange={handleSearch}
           />
         </div>
+        {friendFetcher &&
+          Array.isArray(friendFetcher.data) &&
+          friendFetcher.data.length > 0 &&
+          friendFetcher.data.map((friend: any, index: number) => (
+            <div key={index} className="flex gap-4 ml-4 mt-4">
+              <img
+                src="/image/profile-user.jpeg"
+                className="w-6 h-6"
+                alt="Profile"
+              />
+              <p>
+                {friend.firstName} {friend.lastName}
+              </p>
+            </div>
+          ))}
         {searchQuery.length > 1 && (
           <div className="w-full h-full pt-4">
             {fetcher.data && fetcher.data.length > 0 ? (
