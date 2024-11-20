@@ -10,8 +10,10 @@ export const action: ActionFunction = async ({ request }) => {
   const senderUserId = formData.get("senderUserId");
   const receiverUserId = formData.get("receiverUserId");
 
+  const method = request.method;
+
   // Send a new friend request
-  if (senderUserId && receiverUserId) {
+  if (method === "POST" && senderUserId && receiverUserId) {
     const url = `${process.env.BACKEND_URL}/friend/request`;
     try {
       const response = await fetch(url, {
@@ -39,15 +41,43 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
+  // Delete a friend
+  if (method === "DELETE" && senderUserId && receiverUserId) {
+    const url = `${process.env.BACKEND_URL}/friend/${senderUserId}/${receiverUserId}`;
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify({
+          senderUserId,
+          receiverUserId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression de l'ami");
+      }
+
+      return json({
+        success: true,
+        message: "Friend deleted successfully",
+      });
+    } catch (error) {
+      return json({ error: (error as Error).message }, { status: 500 });
+    }
+  }
+
   // Accept or decline a friend request
   if (!friendRequestId || !actionType) {
     return json({ error: "Missing data" }, { status: 400 });
   }
   const url = `${process.env.BACKEND_URL}/friend/request/${friendRequestId}/${actionType}`;
-  const method = "POST";
   try {
     const response = await fetch(url, {
-      method,
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,

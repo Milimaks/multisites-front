@@ -1,10 +1,11 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
-import { LoaderIcon, Search, UserRoundPlus } from "lucide-react";
+import { log } from "console";
+import { LoaderIcon, Search, UserRoundPlus, UserRoundX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { set } from "zod";
 import Modal from "~/@/components/ModalClickOutside";
-import { Button } from "~/@/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { getOptionalUser, requireAuthCookie } from "~/auth.server";
 
 interface ModalData {
@@ -25,13 +26,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function ChatRoute() {
   const { id: userId } = useLoaderData<typeof loader>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [deleteFriendModal, setDeleteFriendModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [modalData, setModalData] = useState<ModalData | null>(null);
-
   const [IsFocused, setIsFocused] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Fetchers
   const friendFetcher = useFetcher();
   const searchUserfetcher = useFetcher<any>();
   const addFriendFetcher = useFetcher();
+  const deleteFriendFetcher = useFetcher();
 
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,6 +60,18 @@ export default function ChatRoute() {
     setModalData({ firstName, userId });
     setIsModalOpen(true);
   };
+  const handleDeleteModal = (firstName: string, userId: string) => {
+    setModalData({ firstName, userId });
+    setDeleteFriendModal(true);
+  };
+
+  const handleDeleteFriend = (senderUserId: string, receiverUserId: string) => {
+    deleteFriendFetcher.submit(
+      { senderUserId, receiverUserId },
+      { method: "delete", action: "/friend-request" }
+    );
+    setDeleteFriendModal(false);
+  };
 
   const handleAddFriend = (senderUserId: string, receiverUserId: string) => {
     addFriendFetcher.submit(
@@ -73,9 +91,30 @@ export default function ChatRoute() {
     }
   }, [userId]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setSearchQuery("");
+        setIsFocused(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="w-full h-full flex">
-      <aside className="flex flex-col h-85dvh w-80 bg-gray-100">
+      <aside
+        className="flex flex-col h-85dvh w-80 bg-gray-100"
+        ref={containerRef}
+      >
         <div className="rounded-md flex items-center justify-center pt-4">
           <Search className="w-5 h-5 text-muted-foreground m-1" />
           <input
@@ -85,10 +124,6 @@ export default function ChatRoute() {
             value={searchQuery}
             onChange={handleSearch}
             onFocus={() => handleFocus(true)}
-            onBlur={() => {
-              handleFocus(false);
-              setSearchQuery("");
-            }}
           />
         </div>
         {!IsFocused &&
@@ -96,15 +131,26 @@ export default function ChatRoute() {
           Array.isArray(friendFetcher.data) &&
           friendFetcher.data.length > 0 &&
           friendFetcher.data.map((friend: any, index: number) => (
-            <div key={index} className="flex gap-4 ml-4 mt-4">
-              <img
-                src="/image/profile-user.jpeg"
-                className="w-6 h-6"
-                alt="Profile"
-              />
-              <p>
-                {friend.firstName} {friend.lastName}
-              </p>
+            <div
+              key={index}
+              className="flex gap-4 ml-4 mt-4 items-center justify-between"
+            >
+              <div className="flex gap-4">
+                <img
+                  src="/image/profile-user.jpeg"
+                  className="w-6 h-6"
+                  alt="Profile"
+                />
+                <p>
+                  {friend.firstName} {friend.lastName}
+                </p>
+              </div>
+              <button
+                onClick={() => handleDeleteModal(friend.firstName, friend.id)}
+                className="rounded-full w-10 h-10"
+              >
+                <UserRoundX />
+              </button>
             </div>
           ))}
         {IsFocused && searchQuery.length > 1 && (
@@ -122,7 +168,7 @@ export default function ChatRoute() {
                       alt="Profile"
                     />
                     <p>
-                      {user.firstName} {user.id}
+                      {user.firstName} {user.lastName}
                     </p>
                   </div>
                   {Array.isArray(friendFetcher.data) &&
@@ -147,6 +193,35 @@ export default function ChatRoute() {
             )}
           </div>
         )}
+        <Modal
+          isOpen={deleteFriendModal}
+          onClose={() => setDeleteFriendModal(false)}
+          className="p-10"
+        >
+          <p>
+            Voulez vous supprimer{" "}
+            <span className="font-semibold">{modalData?.firstName}</span> de
+            votre liste d'amis ?
+          </p>
+          <div className="flex justify-end pt-4">
+            <Button
+              variant={"ghost"}
+              className="mr-2"
+              onClick={() =>
+                modalData?.userId &&
+                handleDeleteFriend(userId, modalData.userId)
+              }
+            >
+              Oui
+            </Button>
+            <Button
+              variant={"default"}
+              onClick={() => setDeleteFriendModal(false)}
+            >
+              Non
+            </Button>
+          </div>
+        </Modal>
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

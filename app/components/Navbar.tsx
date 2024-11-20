@@ -11,13 +11,13 @@ import {
   NavigationMenuLink,
   NavigationMenuViewport,
   ListItem,
-} from "../components/ui/navigation-menu";
+} from "./ui/navigation-menu";
 import { Link } from "@remix-run/react";
 import React from "react";
 import { Button } from "./ui/button";
 import { ButtonIconHelp } from "./ui/icon-help";
 import { ButtonIconSearch } from "./ui/icon-search";
-import { navbarWelcomeData } from "../../data/navbarDatas";
+import { navbarWelcomeData } from "../data/navbarDatas";
 
 interface NavbarProps {
   icon?: string;

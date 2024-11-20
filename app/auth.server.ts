@@ -43,3 +43,11 @@ export async function requireAuthCookie(request: Request) {
   }
   return user;
 }
+
+export const requireUser = async ({ request }: { request: Request }) => {
+  const user = await getOptionalUser({ request });
+  if (user) {
+    return user;
+  }
+  throw await logout({ request });
+};

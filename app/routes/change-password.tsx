@@ -10,11 +10,11 @@ import {
 } from "@remix-run/react";
 import { z } from "zod";
 import { getOptionalUser } from "../auth.server";
-import type { ActionFeedback } from "~/@/components/FeedbackComponent";
-import { AlertFeedback } from "~/@/components/FeedbackComponent";
-import { Icons } from "~/@/components/icons";
-import { Button, buttonVariants } from "~/@/components/ui/button";
-import { Input } from "~/@/components/ui/input";
+import type { ActionFeedback } from "~/components/FeedbackComponent";
+import { AlertFeedback } from "~/components/FeedbackComponent";
+import { Icons } from "~/components/icons";
+import { Button, buttonVariants } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 
 const resetPasswordSchema = z.object({
   password: z

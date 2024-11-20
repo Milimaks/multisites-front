@@ -1,14 +1,14 @@
 import { useLocation } from "@remix-run/react";
-import { Button } from "~/@/components/ui/button";
-import { Card, CardTitle } from "~/@/components/ui/card";
-import CardCanva from "~/@/components/ui/card-canva";
+import { Button } from "../ui/button";
+import { Card, CardTitle } from "../ui/card";
+import CardCanva from "~/components/ui/card-canva";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "~/@/components/ui/carousel";
+} from "~/components/ui/carousel";
 import { useOptionalUser } from "~/root";
 import Navbar from "../Navbar";
 

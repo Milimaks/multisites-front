@@ -1,14 +1,14 @@
 import { Link, Form } from "@remix-run/react";
-import { Button } from "~/@/components/ui/button";
+import { Button } from "./button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/@/components/ui/card";
-import { Input } from "~/@/components/ui/input";
-import { Label } from "~/@/components/ui/label";
+} from "./card";
+import { Input } from "./input";
+import { Label } from "./label";
 
 export function LoginForm() {
   return (

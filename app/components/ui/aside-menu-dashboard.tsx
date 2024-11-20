@@ -24,7 +24,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/@/components/ui/popover";
+} from "~/components/ui/popover";
 import { Button } from "./button";
 import PremiumLogo from "./logo-premium";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
