@@ -4,7 +4,7 @@ import { log } from "console";
 import { LoaderIcon, Search, UserRoundPlus, UserRoundX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { set } from "zod";
-import Modal from "~/@/components/ModalClickOutside";
+import Modal from "~/components/ModalClickOutside";
 import { Button } from "~/components/ui/button";
 import { getOptionalUser, requireAuthCookie } from "~/auth.server";
 
