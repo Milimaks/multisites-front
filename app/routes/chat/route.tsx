@@ -1,12 +1,12 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
-import { log } from "console";
-import { LoaderIcon, Search, UserRoundPlus, UserRoundX } from "lucide-react";
+import { Search, UserRoundPlus, UserRoundX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { set } from "zod";
+import { requireAuthCookie } from "~/auth.server";
+import ChatInterface from "~/components/chat/ChatInterface";
+import { Chatbox } from "~/components/Chatbox";
 import Modal from "~/components/ModalClickOutside";
 import { Button } from "~/components/ui/button";
-import { getOptionalUser, requireAuthCookie } from "~/auth.server";
 
 interface ModalData {
   userId: string;
@@ -248,7 +248,9 @@ export default function ChatRoute() {
           </div>
         </Modal>
       </aside>
-      <div></div>
+      <div className="bg-red-400 ">
+        <ChatInterface />
+      </div>
     </div>
   );
 }
