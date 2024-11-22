@@ -1,16 +1,18 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { Search, UserRoundPlus, UserRoundX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { requireAuthCookie } from "~/auth.server";
-import ChatInterface from "~/components/chat/ChatInterface";
-import { Chatbox } from "~/components/Chatbox";
 import Modal from "~/components/ModalClickOutside";
 import { Button } from "~/components/ui/button";
+import { useFetchFriendList } from "~/hooks/useFetchFriendList";
+import { useFetchUserSearch } from "~/hooks/useFetchUserSearch";
+import { Method, useFriendRequestAction } from "~/services/friendService";
 
 interface ModalData {
   userId: string;
   firstName: string;
+  actionType: Method;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -27,69 +29,41 @@ export default function ChatRoute() {
   const { id: userId } = useLoaderData<typeof loader>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [deleteFriendModal, setDeleteFriendModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [modalData, setModalData] = useState<ModalData | null>(null);
   const [IsFocused, setIsFocused] = useState(false);
 
+  const { searchQuery, setSearchQuery, handleSearch, searchUserfetcher } =
+    useFetchUserSearch();
+
+  const { handleFriendRequestAction, friendRequestfetcher } =
+    useFriendRequestAction();
+
+  const friendFetcher = useFetchFriendList(userId);
+
   const containerRef = useRef<HTMLDivElement>(null);
   // Fetchers
-  const friendFetcher = useFetcher();
-  const searchUserfetcher = useFetcher<any>();
-  const addFriendFetcher = useFetcher();
-  const deleteFriendFetcher = useFetcher();
 
-  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-
-    debounceTimeout.current = setTimeout(() => {
-      if (query.trim() !== "" && query.length > 1) {
-        searchUserfetcher.load(`/users-search?query=${query}`);
-      }
-    }, 500);
-  };
-
-  const handleModal = (firstName: string, userId: string) => {
-    setModalData({ firstName, userId });
+  const handleModal = (
+    firstName: string,
+    userId: string,
+    actionType: Method
+  ) => {
+    setModalData({ firstName, userId, actionType });
     setIsModalOpen(true);
   };
-  const handleDeleteModal = (firstName: string, userId: string) => {
-    setModalData({ firstName, userId });
-    setDeleteFriendModal(true);
-  };
 
-  const handleDeleteFriend = (senderUserId: string, receiverUserId: string) => {
-    deleteFriendFetcher.submit(
-      { senderUserId, receiverUserId },
-      { method: "delete", action: "/friend-request" }
-    );
-    setDeleteFriendModal(false);
-  };
-
-  const handleAddFriend = (senderUserId: string, receiverUserId: string) => {
-    addFriendFetcher.submit(
-      { senderUserId, receiverUserId },
-      { method: "post", action: "/friend-request" }
-    );
+  const handleActionModal = (
+    senderUserId: any,
+    receiverUserId: any,
+    method: any
+  ) => {
+    handleFriendRequestAction(senderUserId, receiverUserId, method);
     setIsModalOpen(false);
   };
 
   const handleFocus = (e: boolean) => {
     setIsFocused(e);
   };
-
-  useEffect(() => {
-    if (userId) {
-      friendFetcher.load("/friend-list");
-    }
-  }, [userId]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -146,7 +120,9 @@ export default function ChatRoute() {
                 </p>
               </div>
               <button
-                onClick={() => handleDeleteModal(friend.firstName, friend.id)}
+                onClick={() =>
+                  handleModal(friend.firstName, friend.id, "delete")
+                }
                 className="rounded-full w-10 h-10"
               >
                 <UserRoundX />
@@ -176,7 +152,9 @@ export default function ChatRoute() {
                       (friend: any) => friend.id === user.userId
                     ) && (
                       <button
-                        onClick={() => handleModal(user.firstName, user.userId)}
+                        onClick={() =>
+                          handleModal(user.firstName, user.userId, "post")
+                        }
                         className="rounded-full w-10 h-10"
                       >
                         <UserRoundPlus />
@@ -194,50 +172,35 @@ export default function ChatRoute() {
           </div>
         )}
         <Modal
-          isOpen={deleteFriendModal}
-          onClose={() => setDeleteFriendModal(false)}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
           className="p-10"
         >
-          <p>
-            Voulez vous supprimer{" "}
-            <span className="font-semibold">{modalData?.firstName}</span> de
-            votre liste d'amis ?
-          </p>
+          {modalData?.actionType === "post" && (
+            <p>
+              Voulez vous rajouter{" "}
+              <span className="font-semibold">{modalData?.firstName}</span> à
+              votre liste d'amis ?
+            </p>
+          )}
+          {modalData?.actionType === "delete" && (
+            <p>
+              Voulez vous supprimer{" "}
+              <span className="font-semibold">{modalData?.firstName}</span> de
+              votre liste d'amis ?
+            </p>
+          )}
           <div className="flex justify-end pt-4">
             <Button
               variant={"ghost"}
               className="mr-2"
               onClick={() =>
                 modalData?.userId &&
-                handleDeleteFriend(userId, modalData.userId)
-              }
-            >
-              Oui
-            </Button>
-            <Button
-              variant={"default"}
-              onClick={() => setDeleteFriendModal(false)}
-            >
-              Non
-            </Button>
-          </div>
-        </Modal>
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          className="p-10"
-        >
-          <p>
-            Voulez vous rajouter{" "}
-            <span className="font-semibold">{modalData?.firstName}</span> à
-            votre liste d'amis ?
-          </p>
-          <div className="flex justify-end pt-4">
-            <Button
-              variant={"ghost"}
-              className="mr-2"
-              onClick={() =>
-                modalData?.userId && handleAddFriend(userId, modalData.userId)
+                handleActionModal(
+                  userId,
+                  modalData.userId,
+                  modalData.actionType
+                )
               }
             >
               Oui
@@ -248,9 +211,7 @@ export default function ChatRoute() {
           </div>
         </Modal>
       </aside>
-      <div className="bg-red-400 ">
-        <ChatInterface />
-      </div>
+      <div className="bg-red-400 ">{/* <ChatInterface /> */}</div>
     </div>
   );
 }

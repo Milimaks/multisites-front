@@ -11,7 +11,6 @@ export const action: ActionFunction = async ({ request }) => {
   const receiverUserId = formData.get("receiverUserId");
 
   const method = request.method;
-
   // Send a new friend request
   if (method === "POST" && senderUserId && receiverUserId) {
     const url = `${process.env.BACKEND_URL}/friend/request`;
@@ -40,8 +39,8 @@ export const action: ActionFunction = async ({ request }) => {
       return json({ error: (error as Error).message }, { status: 500 });
     }
   }
-
   // Delete a friend
+
   if (method === "DELETE" && senderUserId && receiverUserId) {
     const url = `${process.env.BACKEND_URL}/friend/${senderUserId}/${receiverUserId}`;
     try {
