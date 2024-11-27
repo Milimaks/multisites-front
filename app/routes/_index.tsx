@@ -47,7 +47,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         }
       );
       if (!response.ok) {
-        console.log(response);
         throw new Error("Erreur lors de la création de l'essai premium");
       }
 

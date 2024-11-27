@@ -33,7 +33,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     if (!response.ok) {
       throw new Error("Erreur lors de la récupération des utilisateurs");
     }
-
     const users = await response.json();
     return json(users);
   } catch (error) {

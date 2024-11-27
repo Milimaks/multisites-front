@@ -54,8 +54,6 @@ export const sendMessage = async ({
     },
   });
 
-  console.log(response);
-
   return feedbackSchema.parse(response);
 };
 
