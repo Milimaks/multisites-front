@@ -11,13 +11,14 @@ import {
   useRouteLoaderData,
 } from "@remix-run/react";
 import { z } from "zod";
+import { getOptionalUser } from "./auth.server";
 import AsideMenuDashboard from "./components/ui/aside-menu-dashboard";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { getOptionalUser } from "./auth.server";
+import { UserProvider } from "./context/userContext";
 import "./globals.css";
+import { SocketProvider } from "./hooks/useSocket";
 import { tokenSchema } from "./routes/register";
 import { authenticatedUser, getUserToken } from "./session.server";
-import { UserProvider } from "./context/userContext";
 
 const envSchema = z.object({
   // BACKEND_URL: z.string(),
@@ -147,22 +148,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <UserProvider>
-        <TooltipProvider>
-          <body>
-            {user ? (
-              <AsideMenuDashboard user={user} userToken={userToken}>
-                {children}
-              </AsideMenuDashboard>
-            ) : (
-              children
-            )}
+      <SocketProvider>
+        <UserProvider>
+          <TooltipProvider>
+            <body>
+              {user ? (
+                <AsideMenuDashboard user={user} userToken={userToken}>
+                  {children}
+                </AsideMenuDashboard>
+              ) : (
+                children
+              )}
 
-            <ScrollRestoration />
-            <Scripts />
-          </body>
-        </TooltipProvider>
-      </UserProvider>
+              <ScrollRestoration />
+              <Scripts />
+            </body>
+          </TooltipProvider>
+        </UserProvider>
+      </SocketProvider>
     </html>
   );
 }
