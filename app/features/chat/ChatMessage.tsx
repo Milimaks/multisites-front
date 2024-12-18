@@ -3,14 +3,12 @@ import { format } from "date-fns";
 
 interface ChatMessageProps {
   content: string;
-  timestamp: Date;
   isOwn: boolean;
   avatar?: string;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
   content,
-  timestamp,
   isOwn,
   avatar,
 }) => {
@@ -44,9 +42,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         >
           <p className="text-sm">{content}</p>
         </div>
-        <span className="text-xs text-gray-500 mt-1">
-          {format(timestamp, "HH:mm")}
-        </span>
+        <span className="text-xs text-gray-500 mt-1"></span>
       </div>
     </div>
   );

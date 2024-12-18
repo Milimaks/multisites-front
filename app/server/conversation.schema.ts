@@ -50,9 +50,6 @@ export const getConversationSchema = z.object({
       id: z.string(),
       firstName: z.string(),
       avatarUrl: z.string().optional().nullable(),
-
-      givenDonations: z.array(donationSchema),
-      receivedDonations: z.array(donationSchema),
     })
   ),
 });

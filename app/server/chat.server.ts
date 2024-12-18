@@ -1,11 +1,11 @@
 import { redirect } from "@remix-run/node";
 import { z } from "zod";
 import { feedbackSchema } from "~/routes/forgot-password.js";
-import { fetcher } from "./utils.server";
 import {
   getConversationSchema,
   getConversationsSchema,
 } from "./conversation.schema";
+import { fetcher } from "./utils.server";
 
 export const getConversations = async ({ request }: { request: Request }) => {
   const response = await fetcher({
@@ -60,6 +60,7 @@ export const sendMessage = async ({
 export const conversationFeedbackSchema = feedbackSchema.extend({
   conversationId: z.string().optional().nullable(),
 });
+
 export const createConversation = async ({
   request,
   recipientId,
@@ -67,19 +68,25 @@ export const createConversation = async ({
   request: Request;
   recipientId: string;
 }) => {
-  const response = await fetcher({
-    method: "POST",
-    request,
-    url: `/chat`,
-    data: {
-      recipientId,
-    },
-  });
+  try {
+    const response = await fetcher({
+      method: "POST",
+      request,
+      url: "/chat",
+      data: {
+        recipientId,
+      },
+    });
 
-  const feedback = conversationFeedbackSchema.parse(response);
+    const feedback = conversationFeedbackSchema.parse(response);
 
-  if (feedback.error) {
-    throw new Error(feedback.message);
+    if (feedback.error) {
+      throw new Error(feedback.message);
+    }
+
+    return feedback;
+  } catch (error) {
+    console.error("Erreur création conversation:", error);
+    throw error;
   }
-  return redirect(`/conversations/${feedback.conversationId}`);
 };
