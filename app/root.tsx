@@ -148,24 +148,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <SocketProvider>
-        <UserProvider>
-          <TooltipProvider>
-            <body>
-              {user ? (
+      <UserProvider>
+        <TooltipProvider>
+          <body>
+            {user ? (
+              <SocketProvider>
                 <AsideMenuDashboard user={user} userToken={userToken}>
                   {children}
                 </AsideMenuDashboard>
-              ) : (
-                children
-              )}
+              </SocketProvider>
+            ) : (
+              children
+            )}
 
-              <ScrollRestoration />
-              <Scripts />
-            </body>
-          </TooltipProvider>
-        </UserProvider>
-      </SocketProvider>
+            <ScrollRestoration />
+            <Scripts />
+          </body>
+        </TooltipProvider>
+      </UserProvider>
     </html>
   );
 }

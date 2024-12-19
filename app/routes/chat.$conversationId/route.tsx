@@ -1,6 +1,7 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Socket } from "socket.io-client";
 import { getFriends } from "~/api/friends.api";
 import { requireAuthCookie } from "~/auth.server";
 import Modal from "~/components/ModalClickOutside";
@@ -10,6 +11,7 @@ import { ChatFriendList } from "~/features/chat/ChatFriendList";
 import ChatInterface from "~/features/chat/ChatInterface";
 import { useFetchFriendList } from "~/hooks/useFetchFriendList";
 import { useFetcherInputSearch } from "~/hooks/useFetcherInputSearch";
+import { useSocket } from "~/hooks/useSocket";
 import { User } from "~/lib/user";
 import { getConversation } from "~/server/chat.server";
 import { Method, useFriendRequestAction } from "~/services/friendService";
@@ -54,6 +56,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function ChatRoute() {
   const { id: userId, conversation, friends } = useLoaderData<typeof loader>();
+  const [messages, setMessages] = useState<MessagesType>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -86,6 +89,13 @@ export default function ChatRoute() {
     handleFriendRequestAction(senderUserId, receiverUserId, method);
     setIsModalOpen(false);
   };
+
+  const socket = useSocket();
+
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   socket.on("send-chat-update", (messages))
+  // }, [socket]);
 
   return (
     <div className="w-full h-full flex">
@@ -153,7 +163,7 @@ export default function ChatRoute() {
           </div>
         </Modal>
       </aside>
-      <div className="bg-red-400 flex-1">
+      <div className=" flex-1">
         {" "}
         <ChatInterface conversation={conversation} />
       </div>

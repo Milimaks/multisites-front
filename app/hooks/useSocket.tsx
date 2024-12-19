@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { io, type Socket } from "socket.io-client";
-import { useEnv } from "../root";
 
 const context = createContext<{ socket: Socket | null }>({ socket: null });
 
@@ -12,12 +11,10 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>();
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>(false);
-  const env = useEnv();
   useEffect(() => {
-    const createdSocket = io(env.WEBSOCKET_URL);
+    const createdSocket = io("ws://localhost:8001");
     setSocket(createdSocket);
     if (!createdSocket) return;
-
     createdSocket.emit("connection");
 
     const handleConfirmation = () => {
@@ -39,13 +36,13 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   return (
     <context.Provider
       value={{
-        // Désactiver l'avertissement typescript
         socket: socket ?? null,
       }}
     >
-      <span className="fixed top-0 right-0">
+      {/* // Test the socket connection */}
+      {/* <span className="fixed top-0 right-0">
         {isSocketConnected ? "🟢" : "🔴"}
-      </span>
+      </span> */}
       {children}
     </context.Provider>
   );
