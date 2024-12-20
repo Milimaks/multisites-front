@@ -3,15 +3,19 @@ import { format } from "date-fns";
 
 interface ChatMessageProps {
   content: string;
-  isOwn: boolean;
+  userId: string;
+  senderId: string;
   avatar?: string;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
   content,
-  isOwn,
+  userId,
   avatar,
+  senderId,
 }) => {
+  const isOwn = userId === senderId;
+
   return (
     <div
       className={`flex ${

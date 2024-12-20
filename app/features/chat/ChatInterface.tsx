@@ -27,7 +27,13 @@ const initialMessages: Message[] = [
   },
 ];
 
-function chatInterface({ conversation }: { conversation: any }) {
+function chatInterface({
+  conversation,
+  userId,
+}: {
+  conversation: any;
+  userId: string;
+}) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
   const handleSendMessage = (content: string) => {
@@ -38,7 +44,7 @@ function chatInterface({ conversation }: { conversation: any }) {
     };
     setMessages([...messages, newMessage]);
   };
-  console.log(conversation.messages);
+
   return (
     <div className="flex h-full bg-gray-100">
       <div className="flex flex-col flex-1 max-w-4xl mx-auto bg-white shadow-xl">
@@ -71,14 +77,12 @@ function chatInterface({ conversation }: { conversation: any }) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {conversation.map((message: any) => (
-            <div>{message}</div>
-          ))}
-          {messages.map((message: any) => (
+          {conversation.messages.map((message: any) => (
             <ChatMessage
               key={message.id}
               content={message.content}
-              isOwn={message.isOwn}
+              userId={userId}
+              senderId={message.sender.id}
               avatar={
                 !message.isOwn
                   ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop"

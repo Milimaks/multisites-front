@@ -165,7 +165,7 @@ export default function ChatRoute() {
       </aside>
       <div className=" flex-1">
         {" "}
-        <ChatInterface conversation={conversation} />
+        <ChatInterface conversation={conversation} userId={userId} />
       </div>
     </div>
   );
