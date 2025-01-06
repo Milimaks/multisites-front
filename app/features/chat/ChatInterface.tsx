@@ -46,7 +46,7 @@ function chatInterface({
   };
 
   return (
-    <div className="flex h-full bg-gray-100">
+    <div className="flex h-[85dvh] bg-gray-100">
       <div className="flex flex-col flex-1 max-w-4xl mx-auto bg-white shadow-xl">
         {/* Chat Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
