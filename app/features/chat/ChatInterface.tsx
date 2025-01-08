@@ -1,12 +1,13 @@
 import { useFetcher } from "@remix-run/react";
 import { Info, Phone, Video } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
 
 export interface Message {
   id: number;
   content: string;
+  sender: { id: string };
 }
 
 function chatInterface({
@@ -17,11 +18,36 @@ function chatInterface({
   userId: string;
 }) {
   const fetcherSendMessage = useFetcher();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(conversation.messages);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSendMessage = (content: string) => {
-    // const newMessages = sendMessage(messages, content);
-    // setMessages(newMessages);
+    // Optimistically add the message to the UI before sending it to the server
+    const newMessage: Message = {
+      id: messages.length + 1,
+      content,
+      sender: { id: userId },
+    };
+    setMessages([...messages, newMessage]);
+
+    // Scroll to bottom
+    scrollToBottom();
+
+    // Send the message to the server
+    fetcherSendMessage.submit(
+      {
+        content,
+        conversationId: conversation.id,
+      },
+      {
+        method: "post",
+        action: `/chat/${conversation.id}`,
+      }
+    );
   };
 
   return (
@@ -56,12 +82,12 @@ function chatInterface({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {conversation.messages.map((message: any) => (
+          {messages.map((message: any) => (
             <ChatMessage
               key={message.id}
               content={message.content}
               userId={userId}
-              senderId={message.sender.id}
+              senderId={message.sender?.id}
               avatar={
                 !message.isOwn
                   ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop"
@@ -69,6 +95,7 @@ function chatInterface({
               }
             />
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         <ChatInput
