@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import { getFriends } from "~/api/friends.api";
 import { requireAuthCookie } from "~/auth.server";
+import { ActionFeedback } from "~/components/FeedbackComponent";
 import Modal from "~/components/ModalClickOutside";
 import SearchInput from "~/components/SearchInput";
 import { Button } from "~/components/ui/button";
@@ -13,8 +14,9 @@ import { useFetchFriendList } from "~/hooks/useFetchFriendList";
 import { useFetcherInputSearch } from "~/hooks/useFetcherInputSearch";
 import { useSocket } from "~/hooks/useSocket";
 import { User } from "~/lib/user";
-import { getConversation } from "~/server/chat.server";
+import { getConversation, sendMessage } from "~/server/chat.server";
 import { Method, useFriendRequestAction } from "~/services/friendService";
+import { logout } from "~/session.server";
 
 interface ModalData {
   userId: string;
@@ -56,6 +58,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function ChatRoute() {
   const { id: userId, conversation, friends } = useLoaderData<typeof loader>();
+
   const [messages, setMessages] = useState<MessagesType>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -170,3 +173,30 @@ export default function ChatRoute() {
     </div>
   );
 }
+
+export const action = async ({ request, params }: LoaderFunctionArgs) => {
+  await requireAuthCookie(request);
+
+  const conversationId = params.conversationId;
+
+  if (!conversationId) {
+    throw await logout({
+      request,
+    });
+  }
+  const formData = await request.formData();
+  const content = formData.get("content") ?? null;
+  if (!content) {
+    return json<ActionFeedback>({
+      error: true,
+      message: "Votre message ne doit pas être vide.",
+    });
+  }
+
+  const apiFeedback = await sendMessage({
+    request,
+    conversationId,
+    content: content as string,
+  });
+  return json<ActionFeedback>(apiFeedback);
+};

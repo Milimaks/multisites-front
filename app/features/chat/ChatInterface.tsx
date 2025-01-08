@@ -1,31 +1,13 @@
-import React, { useState } from "react";
-import { ChatMessage } from "./ChatMessage";
+import { useFetcher } from "@remix-run/react";
+import { Info, Phone, Video } from "lucide-react";
+import { useState } from "react";
 import { ChatInput } from "./ChatInput";
-import { Phone, Video, Info } from "lucide-react";
+import { ChatMessage } from "./ChatMessage";
 
-interface Message {
+export interface Message {
   id: number;
   content: string;
-  isOwn: boolean;
 }
-
-const initialMessages: Message[] = [
-  {
-    id: 1,
-    content: "Hey! How's it going?",
-    isOwn: false,
-  },
-  {
-    id: 2,
-    content: "I'm doing great! Just finished that project we talked about.",
-    isOwn: true,
-  },
-  {
-    id: 3,
-    content: "That's awesome! Would love to see it sometime.",
-    isOwn: false,
-  },
-];
 
 function chatInterface({
   conversation,
@@ -34,15 +16,12 @@ function chatInterface({
   conversation: any;
   userId: string;
 }) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const fetcherSendMessage = useFetcher();
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSendMessage = (content: string) => {
-    const newMessage: Message = {
-      id: messages.length + 1,
-      content,
-      isOwn: true,
-    };
-    setMessages([...messages, newMessage]);
+    // const newMessages = sendMessage(messages, content);
+    // setMessages(newMessages);
   };
 
   return (
@@ -92,7 +71,10 @@ function chatInterface({
           ))}
         </div>
 
-        <ChatInput onSendMessage={handleSendMessage} />
+        <ChatInput
+          onSendMessage={handleSendMessage}
+          conversationId={conversation.id}
+        />
       </div>
     </div>
   );
