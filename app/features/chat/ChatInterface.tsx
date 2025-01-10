@@ -1,6 +1,6 @@
 import { useFetcher } from "@remix-run/react";
 import { Info, Phone, Video } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
 
@@ -25,6 +25,10 @@ function chatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   const handleSendMessage = (content: string) => {
     // Optimistically add the message to the UI before sending it to the server
     const newMessage: Message = {
@@ -32,7 +36,10 @@ function chatInterface({
       content,
       sender: { id: userId },
     };
-    setMessages([...messages, newMessage]);
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages, newMessage];
+      return updatedMessages;
+    });
 
     // Scroll to bottom
     scrollToBottom();
@@ -95,13 +102,13 @@ function chatInterface({
               }
             />
           ))}
-          <div ref={messagesEndRef} />
         </div>
 
         <ChatInput
           onSendMessage={handleSendMessage}
           conversationId={conversation.id}
         />
+        <div ref={messagesEndRef} className="ded" />
       </div>
     </div>
   );

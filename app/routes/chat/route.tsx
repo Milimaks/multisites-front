@@ -47,3 +47,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     friends,
   });
 }
+
+export const action = async ({ request }: LoaderFunctionArgs) => {
+  const user = await requireAuthCookie(request);
+  const { userId, actionType } = await request.json();
+  const conversation = await createConversation({
+    request,
+    recipientId: userId,
+  });
+
+  return json({ conversationId: conversation.conversationId });
+};

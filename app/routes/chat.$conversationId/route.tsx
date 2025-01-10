@@ -1,7 +1,6 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
-import { Socket } from "socket.io-client";
+import { useLoaderData, useParams } from "@remix-run/react";
+import { useRef, useState } from "react";
 import { getFriends } from "~/api/friends.api";
 import { requireAuthCookie } from "~/auth.server";
 import { ActionFeedback } from "~/components/FeedbackComponent";
@@ -37,7 +36,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await requireAuthCookie(request);
   const friends = await getFriends(request);
   const { conversationId } = params;
-
   if (!conversationId) {
     throw new Error("Conversation ID is required");
   }
@@ -57,9 +55,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function ChatRoute() {
-  const { id: userId, conversation, friends } = useLoaderData<typeof loader>();
-
-  const [messages, setMessages] = useState<MessagesType>([]);
+  const { id: userId, conversation } = useLoaderData<typeof loader>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -168,7 +164,11 @@ export default function ChatRoute() {
       </aside>
       <div className=" flex-1">
         {" "}
-        <ChatInterface conversation={conversation} userId={userId} />
+        <ChatInterface
+          key={conversation.id}
+          conversation={conversation}
+          userId={userId}
+        />
       </div>
     </div>
   );
