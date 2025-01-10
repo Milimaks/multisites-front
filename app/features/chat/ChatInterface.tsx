@@ -25,10 +25,6 @@ function chatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const handleSendMessage = (content: string) => {
     // Optimistically add the message to the UI before sending it to the server
     const newMessage: Message = {
@@ -102,13 +98,14 @@ function chatInterface({
               }
             />
           ))}
+          {/* Scroll to bottom after each message post */}
+          <div ref={messagesEndRef} />
         </div>
 
         <ChatInput
           onSendMessage={handleSendMessage}
           conversationId={conversation.id}
         />
-        <div ref={messagesEndRef} className="ded" />
       </div>
     </div>
   );
