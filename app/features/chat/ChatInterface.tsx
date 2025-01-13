@@ -37,9 +37,10 @@ function chatInterface({
       return updatedMessages;
     });
 
-    // Scroll to bottom
-    scrollToBottom();
-
+    // Allows the function to be called after the component has been rendered
+    setTimeout(() => {
+      scrollToBottom();
+    }, 0);
     // Send the message to the server
     fetcherSendMessage.submit(
       {
@@ -99,7 +100,7 @@ function chatInterface({
             />
           ))}
           {/* Scroll to bottom after each message post */}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} className="background-red" />
         </div>
 
         <ChatInput
