@@ -3,6 +3,8 @@ import { Info, Phone, Video } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
+import { send } from "vite";
+import { useChat } from "~/hooks/useChat";
 
 export interface Message {
   id: number;
@@ -18,30 +20,27 @@ function chatInterface({
   userId: string;
 }) {
   const fetcherSendMessage = useFetcher();
-  const [messages, setMessages] = useState<Message[]>(conversation.messages);
+  const { sendMessage, messages } = useChat(
+    conversation.id,
+    conversation.messages
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     // Optimistically add the message to the UI before sending it to the server
-    const newMessage: Message = {
-      id: messages.length + 1,
-      content,
-      sender: { id: userId },
-    };
-    setMessages((prevMessages) => {
-      const updatedMessages = [...prevMessages, newMessage];
-      return updatedMessages;
-    });
+    sendMessage(content, userId);
 
     // Allows the function to be called after the component has been rendered
     setTimeout(() => {
       scrollToBottom();
     }, 0);
-    // Send the message to the server
+
+    // Send the message to the route action
+
     fetcherSendMessage.submit(
       {
         content,

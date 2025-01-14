@@ -38,6 +38,7 @@ export default function ChatConversationRoute() {
 }
 
 export const action = async ({ request, params }: LoaderFunctionArgs) => {
+  console.log("action");
   await requireAuthCookie(request);
 
   const conversationId = params.conversationId;

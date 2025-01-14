@@ -12,3 +12,9 @@ export interface SearchInputProps<T extends SearchableItem> {
   errorMessage?: string;
   debounceMs?: number;
 }
+
+export interface Message {
+  id: number;
+  content: string;
+  sender: { id: string };
+}
