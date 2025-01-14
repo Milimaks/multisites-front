@@ -20,10 +20,12 @@ function chatInterface({
   userId: string;
 }) {
   const fetcherSendMessage = useFetcher();
-  const { sendMessage, messages } = useChat(
-    conversation.id,
-    conversation.messages
-  );
+  const messages = conversation.messages;
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation]);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -32,7 +34,7 @@ function chatInterface({
 
   const handleSendMessage = async (content: string) => {
     // Optimistically add the message to the UI before sending it to the server
-    sendMessage(content, userId);
+    // sendMessage(content, userId);
 
     // Allows the function to be called after the component has been rendered
     setTimeout(() => {

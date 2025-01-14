@@ -1,25 +1,19 @@
 import React, { useState, KeyboardEvent, useRef } from "react";
 import { Smile, Paperclip, Image as ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { useFetcher } from "@remix-run/react";
 
 interface ChatInputProps {
   onSendMessage: (message: string, attachments?: File[]) => void;
   conversationId: string;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({
-  onSendMessage,
-  conversationId,
-}) => {
+export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const messageFetcher = useFetcher();
 
   const handleSend = () => {
     if (message.trim() || selectedFiles.length > 0) {
