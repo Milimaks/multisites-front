@@ -38,6 +38,7 @@ export default function ChatConversationRoute() {
     if (!socket) return;
 
     socket.emit("join-chat-room", conversation.id);
+    setMessages(conversation);
     socket.on("send-chat-update", (messagesData) => {
       const updatedMessages = messagesSchema.parse(messagesData);
       setMessages((prevConversation) => ({
@@ -45,8 +46,7 @@ export default function ChatConversationRoute() {
         messages: updatedMessages,
       }));
     });
-  }, [socket]);
-
+  }, [socket, conversation.id]);
   return (
     <ChatInterface
       key={conversation.id}
